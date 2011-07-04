@@ -17,7 +17,7 @@ package com.liu.load
 			_loaderThread = new LoaderThread;
 			_loaderThread.addEventListener(Event.COMPLETE,onComplete);
 		}
-		public function load(loadList:Vector.<LoadInfo>;):void{
+		public function load(loadList:Vector.<LoadInfo>):void{
 			_flag = 0;
 			this._loadList = loadList;
 			_loaderThread.load(_loadList[_flag]);

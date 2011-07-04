@@ -10,10 +10,11 @@ package com.liu.load
 		
 		public function LoadManager()
 		{
-			if(instance!=null) throw new Error("Error: Singletons can only be instantiated via getInstance() method!");  
+			if(_instance!=null) throw new Error("Error: Singletons can only be instantiated via getInstance() method!");  
 			LoadManager._instance = this;  
+			init();
 		}
-		public function getInstance():LoadManager{
+		public static function getInstance():LoadManager{
 			if(!_instance)
 				_instance = new LoadManager();
 			return _instance;

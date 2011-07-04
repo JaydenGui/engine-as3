@@ -67,7 +67,7 @@ package com.liu.load
 		}
 		private function onIOError(event:IOErrorEvent):void{
 			if(_ioerrorTime == 2){
-				load(_loadInfo);
+				load(_loaderInfo);
 			}else{
 				trace("加载错误" + _loaderInfo);
 				running = false;
