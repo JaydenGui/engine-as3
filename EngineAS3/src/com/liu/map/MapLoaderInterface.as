@@ -14,12 +14,21 @@ package com.liu.map
 	
 	public class MapLoaderInterface extends Sprite implements IResizeDisplayObject
 	{
+		private static var _instance:MapLoaderInterface;
 		private var loadInfoTxt:TextField;
 		private var loadCount:int;
 		public function MapLoaderInterface()
 		{
+			if(_instance!=null) throw new Error("Error: Singletons can only be instantiated via getInstance() method!");  
+			MapLoaderInterface._instance = this;  
 			this.addEventListener(Event.ADDED_TO_STAGE,init);
 		}
+		public static function getInstance():MapLoaderInterface{
+			if(!_instance)
+				_instance = new MapLoaderInterface();
+			return _instance;
+		}
+		
 		private function init(event:Event=null):void{
 			loadInfoTxt = new TextField();
 			loadInfoTxt.width = 200;
