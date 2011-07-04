@@ -22,7 +22,7 @@ package com.liu.load
 			}
 			_queueAry = new Vector.<LoadInfo>;
 		}
-		private function addLoad(loadInfo:LoadInfo):void{
+		public function addLoad(loadInfo:LoadInfo):void{
 			var loader:LoaderThread = getIdleLoader();
 			if(loader){
 				loader.load(loadInfo);
