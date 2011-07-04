@@ -10,6 +10,7 @@ package
 	
 	public class EngineAS3 extends Sprite
 	{
+		private var loading:MapLoaderInterface;
 		public function EngineAS3()
 		{
 			this.addEventListener(Event.ADDED_TO_STAGE,addToStage);
@@ -18,10 +19,11 @@ package
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
 			stage.addEventListener(Event.RESIZE,onStageResize);
-			addTxt();
+			addLoading();
 		}
-		private function addTxt():void{
-			this.addChild(new MapLoaderInterface);
+		private function addLoading():void{
+			loading = new MapLoaderInterface
+			this.addChild(loading);
 		}
 		private function onStageResize(event:Event):void{
 			for(var i:int;i<this.numChildren;i++){

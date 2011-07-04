@@ -6,6 +6,8 @@ package com.liu.map
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFieldType;
@@ -13,6 +15,7 @@ package com.liu.map
 	public class MapLoaderInterface extends Sprite implements IResizeDisplayObject
 	{
 		private var loadInfoTxt:TextField;
+		private var loadCount:int;
 		public function MapLoaderInterface()
 		{
 			this.addEventListener(Event.ADDED_TO_STAGE,init);
@@ -26,12 +29,9 @@ package com.liu.map
 			loadInfoTxt.x = (stage.stageWidth-loadInfoTxt.width)*0.5;
 			loadInfoTxt.y = (stage.stageHeight-loadInfoTxt.height)*0.5;
 			this.addChild(loadInfoTxt);
-			this.graphics.beginFill(0x000000);
-			this.graphics.drawCircle(0,0,10);
-			this.graphics.endFill();
 			loadInfoTxt.type = TextFieldType.INPUT;
-			//loadInfoTxt.addEventListener(MouseEvent.CLICK,onClick);
 		}
+		
 		private function onClick(event:Event):void{
 			if(stage.displayState != "fullScreen"){
 				stage.displayState = "fullScreen";
