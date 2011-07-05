@@ -15,6 +15,7 @@ package com.liu.load
 			this.url  = url;
 			this.type = type;
 			this.fun  = fun;
+			this.showProgress = showProgress;
 		}
 		public function toString():String{
 			return url + "," + type;

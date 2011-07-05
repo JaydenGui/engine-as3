@@ -17,6 +17,8 @@ package com.liu.map
 		private static var _instance:MapLoaderInterface;
 		private var loadInfoTxt:TextField;
 		private var loadCount:int;
+		private var count:int;
+		private var currentCount:int;
 		public function MapLoaderInterface()
 		{
 			if(_instance!=null) throw new Error("Error: Singletons can only be instantiated via getInstance() method!");  
@@ -39,6 +41,10 @@ package com.liu.map
 			loadInfoTxt.y = (stage.stageHeight-loadInfoTxt.height)*0.5;
 			this.addChild(loadInfoTxt);
 			loadInfoTxt.type = TextFieldType.INPUT;
+		}
+		
+		public function setProgress(n:Number):void{
+			loadInfoTxt.text = "加载" + int(n * 100) + "%";
 		}
 		
 		private function onClick(event:Event):void{

@@ -1,6 +1,7 @@
 package
 {
 	import com.liu.map.IResizeDisplayObject;
+	import com.liu.map.MapContainer;
 	import com.liu.map.MapLoaderInterface;
 	import com.liu.map.MapManager;
 	
@@ -12,6 +13,7 @@ package
 	public class EngineAS3 extends Sprite
 	{
 		private var mapManager:MapManager;
+		private var mapContainer:MapContainer;
 		public function EngineAS3()
 		{
 			this.addEventListener(Event.ADDED_TO_STAGE,addToStage);
@@ -23,7 +25,9 @@ package
 			initMap();
 		}
 		private function initMap():void{
-			mapManager = new MapManager();
+			mapContainer = new MapContainer;
+			this.addChild(mapContainer);
+			mapManager = new MapManager(stage,mapContainer);
 			mapManager.initMap("CJ301");
 		}
 		private function onStageResize(event:Event):void{

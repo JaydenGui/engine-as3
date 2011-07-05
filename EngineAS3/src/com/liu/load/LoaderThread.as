@@ -1,5 +1,7 @@
 package com.liu.load
 {
+	import com.liu.map.MapLoaderInterface;
+	
 	import flash.display.Loader;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -76,7 +78,7 @@ package com.liu.load
 		}
 		private function onProgress(event:ProgressEvent):void{
 			if(_loaderInfo.showProgress){
-				
+				MapLoaderInterface.getInstance().setProgress(event.bytesLoaded/event.bytesTotal);
 			}
 		}
 		
