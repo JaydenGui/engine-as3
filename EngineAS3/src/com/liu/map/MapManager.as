@@ -4,9 +4,15 @@ package com.liu.map
 	import com.liu.load.LoadManager;
 	
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
+	import flash.geom.Matrix;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
+	import flash.system.System;
+	import flash.utils.getTimer;
 
 	public class MapManager
 	{
@@ -16,6 +22,7 @@ package com.liu.map
 		private var _mapName:String = 'CJ301';
 		private var stage:Stage;
 		private var _mapContainer:MapContainer;
+		private var _mapdataDIC:Object;
 		
 		private var _mapWidth:int;
 		private var _mapHeight:int;
@@ -33,28 +40,55 @@ package com.liu.map
 			var mapdataUrl:String = _baseUrl + _mapName + "/" + _mapName + ".navmap";
 			var loadInfo:LoadInfo = new LoadInfo(mapdataUrl,LoadInfo.XML,onLoadmapData,true);
 			loadList.push(loadInfo);
-			var miniMapUrl:String = _baseUrl + _mapName + "/" + _mapName + ".jpg";
+			var miniMapUrl:String = _baseUrl + _mapName + "/minimap/" + _mapName + ".jpg";
 			loadInfo = new LoadInfo(miniMapUrl,LoadInfo.BITMAP,onLoadMiniMap,true);
 			loadList.push(loadInfo);
 			
 			stage.addChild(MapLoaderInterface.getInstance());
 			LoadManager.getInstance().addListLoad(loadList,onMapLoaded);
+			
+			_mapdataDIC = new Object;
 		}
 		
 		private function onLoadmapData(xml:XML):void{
 			this._mapWidth = xml.@mapwidth;
 			this._mapHeight = xml.@mapheight;
 			this._pich = xml.@pich;
-			this._picw = xml.@_mapHeight;
+			this._picw = xml.@picw;
 		}
 		private function onLoadMiniMap(bitmap:Bitmap):void{
-			_mapContainer.addChild(bitmap);
-			bitmap.width = _mapWidth;
-			bitmap.height = 1800;
+			var time:int = getTimer();
+			var bigbitmapdata:BitmapData = new BitmapData(_mapWidth,_mapHeight);
+			var ma:Matrix = new Matrix()
+			ma.scale(_mapWidth/bitmap.width,_mapHeight/bitmap.height);
+			bigbitmapdata.draw(bitmap,ma);
+			var w:int = Math.ceil(_mapWidth/_picw);
+			var h:int = Math.ceil(_mapHeight/_pich);
+			var key:String;
+			var bitmapdata:BitmapData;
+			var rec:Rectangle = new Rectangle(0,0,_picw,_pich);
+			var point:Point = new Point();
+			for(var i:int=0;i<h;i++){
+				for(var j:int=0;j<w;j++){
+					key = i + "_" + j;
+					bitmapdata = new BitmapData(_picw,_pich,false,0);
+					rec.x = i*_picw;
+					rec.y = j*_pich;
+					bitmapdata.copyPixels(bigbitmapdata,rec,point);
+					_mapdataDIC[key] = bitmapdata;
+					/*var bitmaps:Bitmap = new Bitmap(bitmapdata);
+					_mapContainer.addChild(bitmaps);
+					bitmaps.x = rec.x;
+					bitmaps.y = rec.y;*/
+				}
+			}
+			trace(getTimer() - time,System.totalMemory);
+			_mapContainer.mapdataDIC = _mapdataDIC;
 		}
 		
 		private function onMapLoaded(event:Event):void{
 			stage.removeChild(MapLoaderInterface.getInstance());
+			_mapContainer.refrushMap(new Point(500,500));
 		}
 		
 		
