@@ -72,14 +72,14 @@ package com.liu.map
 				for(var j:int=0;j<w;j++){
 					key = i + "_" + j;
 					bitmapdata = new BitmapData(_picw,_pich,false,0);
-					rec.x = i*_picw;
-					rec.y = j*_pich;
+					rec.x = j*_picw;
+					rec.y = i*_pich;
 					bitmapdata.copyPixels(bigbitmapdata,rec,point);
 					_mapdataDIC[key] = bitmapdata;
-					/*var bitmaps:Bitmap = new Bitmap(bitmapdata);
-					_mapContainer.addChild(bitmaps);
+					var bitmaps:Bitmap = new Bitmap(bitmapdata);
+					_mapContainer.addBitmap(bitmaps);
 					bitmaps.x = rec.x;
-					bitmaps.y = rec.y;*/
+					bitmaps.y = rec.y;
 				}
 			}
 			trace(getTimer() - time,System.totalMemory);
@@ -88,7 +88,18 @@ package com.liu.map
 		
 		private function onMapLoaded(event:Event):void{
 			stage.removeChild(MapLoaderInterface.getInstance());
-			_mapContainer.refrushMap(new Point(500,500));
+			_mapContainer.mapW = this._mapWidth;
+			_mapContainer.mapH = this._mapHeight;
+			_mapContainer.refrushMap(new Point(2000,500));
+			_mapContainer.addEventListener(Event.ENTER_FRAME,enFrame);
+		}
+		private var num:int;
+		private function enFrame(event:Event):void{
+			num += 5;
+			if(num>=1090){
+				num = 340;
+			}
+			_mapContainer.refrushMap(new Point(num*_mapWidth/stage.stageWidth,_mapContainer.stage.mouseY*_mapHeight/stage.stageHeight));
 		}
 		
 		
