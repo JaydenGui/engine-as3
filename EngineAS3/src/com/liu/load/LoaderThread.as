@@ -40,6 +40,7 @@ package com.liu.load
 		 * 开始加载
 		 * */
 		public function load(loadInfo:LoadInfo):void{
+			running = true;
 			this._loaderInfo = loadInfo;
 			_request = new URLRequest(loadInfo.url);
 			if(loadInfo.type != LoadInfo.XML){
@@ -63,7 +64,10 @@ package com.liu.load
 			}
 		}
 		private function onLoadDataComplete(event:Event):void{
-			_loaderInfo.fun(event.target.content);
+			if(this._loaderInfo.info)
+				_loaderInfo.fun(event.target.content,this._loaderInfo.info);
+			else
+				_loaderInfo.fun(event.target.content);
 			running = false;
 			this.dispatchEvent(new Event(Event.COMPLETE));
 		}

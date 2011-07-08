@@ -10,12 +10,14 @@ package com.liu.load
 		public var type:String;
 		public var fun:Function;
 		public var showProgress:Boolean;
-		public function LoadInfo(url:String,type:String,fun:Function,showProgress:Boolean=false)
+		public var info:Object;
+		public function LoadInfo(url:String,type:String,fun:Function,showProgress:Boolean=false,info:Object=null)
 		{
 			this.url  = url;
 			this.type = type;
 			this.fun  = fun;
 			this.showProgress = showProgress;
+			this.info = info;
 		}
 		public function toString():String{
 			return url + "," + type;
