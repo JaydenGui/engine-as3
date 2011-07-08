@@ -8,11 +8,15 @@ package com.liu.map
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
+	import flash.events.TimerEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.system.System;
+	import flash.utils.Timer;
 	import flash.utils.getTimer;
+	
+	import org.osmf.events.TimeEvent;
 
 	public class MapManager
 	{
@@ -36,10 +40,12 @@ package com.liu.map
 		}
 		public function initMap(mapName:String):void{
 			this._mapName = mapName;
+			
 			var loadList:Vector.<LoadInfo> = new Vector.<LoadInfo>;
 			var mapdataUrl:String = _baseUrl + _mapName + "/" + _mapName + ".navmap";
 			var loadInfo:LoadInfo = new LoadInfo(mapdataUrl,LoadInfo.XML,onLoadmapData,true);
 			loadList.push(loadInfo);
+			
 			var miniMapUrl:String = _baseUrl + _mapName + "/minimap/" + _mapName + ".jpg";
 			loadInfo = new LoadInfo(miniMapUrl,LoadInfo.BITMAP,onLoadMiniMap,true);
 			loadList.push(loadInfo);
@@ -56,7 +62,43 @@ package com.liu.map
 			this._pich = xml.@pich;
 			this._picw = xml.@picw;
 		}
+		private function onLoadmap2(bitmap:Bitmap):void{
+			/*var bigbitmapdata:BitmapData = new BitmapData(_mapWidth,_mapHeight);
+			var bitmapdata:BitmapData = bitmap.bitmapData;*/
+			/*var ma:Matrix = new Matrix()
+			ma.scale(_mapWidth/bitmap.width,_mapHeight/bitmap.height);*/
+			//bigbitmapdata.draw(bitmap);
+			/*bigbitmapdata.copyPixels(bitmap.bitmapData,new Rectangle(0,0,_mapWidth,_mapHeight),new Point());
+			bitmapdata.copyPixels(bigbitmapdata,new Rectangle(0,0,_mapWidth,_mapHeight),new Point());*/
+			//bitmap.bitmapData = bigbitmapdata;
+			_mapContainer.mapBitmap = bitmap;
+			//System.gc();
+		}
+		private function onLoadAll():void{
+			for(var i:int=0;i<6;i++){
+				for(var j:int=0;j<10;j++){
+					var key:String = i + "_" + j + ".jpg";
+					var url:String = _baseUrl + _mapName + "/images/" + key;
+					var loadInfo:LoadInfo = new LoadInfo(url,LoadInfo.BITMAP,refreshBitmap,false,new Point(i,j));
+					LoadManager.getInstance().addSingleLoad(loadInfo);
+				}
+			}
+		}
+		private function refreshBitmap(bitmap:Bitmap,p:Point):void{
+			var bitmapdata:BitmapData = _mapContainer.mapBitmap.bitmapData;
+			var newbitmapdata:BitmapData = bitmap.bitmapData;
+			var rec:Rectangle = new Rectangle(0,0,300,300);
+			var newp:Point = new Point(p.y * 300,p.x * 300);
+			bitmapdata.copyPixels(newbitmapdata,rec,newp);
+		}
+		private function onLoadmap3(bitmap:Bitmap):void{
+			//_mapContainer.mainBitmapdata = bitmap.bitmapData;
+		}
 		private function onLoadMiniMap(bitmap:Bitmap):void{
+			_mapContainer.mapBitmap = bitmap;
+			onLoadAll();
+		}
+		private function onLoadMiniMap_old(bitmap:Bitmap):void{
 			var time:int = getTimer();
 			var bigbitmapdata:BitmapData = new BitmapData(_mapWidth,_mapHeight);
 			var ma:Matrix = new Matrix()
@@ -91,15 +133,29 @@ package com.liu.map
 			_mapContainer.mapW = this._mapWidth;
 			_mapContainer.mapH = this._mapHeight;
 			_mapContainer.refrushMap(new Point(2000,500));
+			//var timer:Timer = new Timer(10000,1);
+			//timer.addEventListener(TimerEvent.TIMER_COMPLETE,onComplete);
 			_mapContainer.addEventListener(Event.ENTER_FRAME,enFrame);
+			//timer.start();
 		}
-		private var num:int;
+		private var t:int;
+		private function onComplete(event:TimerEvent):void{
+			trace("总帧数  " + t);
+			_mapContainer.removeEventListener(Event.ENTER_FRAME,enFrame);
+		}
+		private var num:Number = 340;
+		private var numy:Number = 0;
 		private function enFrame(event:Event):void{
-			num += 5;
+			num += 1.5;
+			numy += 1.5;
 			if(num>=1090){
 				num = 340;
 			}
-			_mapContainer.refrushMap(new Point(num*_mapWidth/stage.stageWidth,_mapContainer.stage.mouseY*_mapHeight/stage.stageHeight));
+			if(numy > 800){
+				numy = 1;
+			}
+			_mapContainer.refrushMap(new Point(num*_mapWidth/stage.stageWidth,numy*_mapHeight/stage.stageHeight));
+			//t++;
 		}
 		
 		

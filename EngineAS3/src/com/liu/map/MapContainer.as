@@ -3,9 +3,11 @@ package com.liu.map
 	import com.liu.element.StaticSprite;
 	
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flash.utils.getTimer;
 	
 	public class MapContainer extends Sprite implements IResizeDisplayObject
@@ -13,6 +15,13 @@ package com.liu.map
 		private var _mapSprite:Sprite;
 		private var _staticSpriteDIC:Object
 		private var _mapdataDIC:Object
+		
+		private var _mapBitmap:Bitmap;
+		
+		private var _mainBitmapdata:BitmapData;
+		private var _renderBitmap:Bitmap;
+		private var _rec:Rectangle;
+		private var _p:Point;
 		
 		private var _recW:int;
 		private var _recH:int;
@@ -31,13 +40,6 @@ package com.liu.map
 			
 			_staticSpriteDIC = new Object;
 			
-			/*var tile:StaticSprite;
-			for(var i:int=0;i<30;i++)
-			{
-				tile = new StaticSprite();			
-				//_mapSprite.addChild(tile);
-				_staticSpriteAry[_staticSpriteAry.length]=tile;
-			}*/
 			this.addEventListener(Event.ADDED_TO_STAGE,refreshStaticSpriteAry);
 		}
 		
@@ -50,6 +52,14 @@ package com.liu.map
 			
 			if(event == null)
 				return;
+			
+			/*var bitmapdata:BitmapData = new BitmapData(_recW,_recH,false);
+			_renderBitmap = new Bitmap(bitmapdata);
+			this.addChild(_renderBitmap);*/
+			
+			_rec = new Rectangle(0,0,_recW,_recH);
+			_p = new Point();
+			
 			var all:int = _wNum*_hNum;
 			
 			var tile:StaticSprite;
@@ -76,16 +86,27 @@ package com.liu.map
 				tempy = this._recH - _mapH;
 			}
 			
-			this._mapSprite.x = tempx;
-			this._mapSprite.y = tempy;
+			/*this._mapSprite.x = tempx;
+			this._mapSprite.y = tempy;*/
+			
+			this._mapBitmap.x = tempx;
+			this._mapBitmap.y = tempy;
 			
 			//getRenderList(-tempx,-tempy);
+			//renderBitmap(-tempx,-tempy);
 		}
-		
+		private function loadRound():void{
+			
+		}
 		public function addBitmap(bitmap:Bitmap):void{
 			this._mapSprite.addChild(bitmap);
 		}
-		
+		public function renderBitmap(disX:int,disY:int):void{
+			_rec.x = disX;
+			_rec.y = disY;
+			var bitmapdata:BitmapData = _renderBitmap.bitmapData;
+			//bitmapdata.copyPixels(mainBitmapdata,_rec,_p);
+		}
 		public function getRenderList(disX:int,disY:int):void{
 			var beginX:int = disX/300;
 			var beginY:int = disY/300;
@@ -157,6 +178,18 @@ package com.liu.map
 		public function set mapH(value:int):void
 		{
 			_mapH = value;
+		}
+
+		public function set mapBitmap(value:Bitmap):void
+		{
+			_mapBitmap = value;
+			this._mainBitmapdata = _mapBitmap.bitmapData;
+			this.addBitmap(_mapBitmap);
+		}
+
+		public function get mapBitmap():Bitmap
+		{
+			return _mapBitmap;
 		}
 
 
