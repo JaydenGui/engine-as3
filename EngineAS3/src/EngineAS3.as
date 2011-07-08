@@ -29,6 +29,7 @@ package
 			this.addChild(mapContainer);
 			mapManager = new MapManager(stage,mapContainer);
 			mapManager.initMap("CJ301");
+			
 		}
 		private function onStageResize(event:Event):void{
 			for(var i:int;i<this.numChildren;i++){
