@@ -1,5 +1,6 @@
 package
 {
+	import com.liu.debug.Console;
 	import com.liu.map.IResizeDisplayObject;
 	import com.liu.map.MapContainer;
 	import com.liu.map.MapLoaderInterface;
@@ -29,6 +30,7 @@ package
 			this.addChild(mapContainer);
 			mapManager = new MapManager(stage,mapContainer);
 			mapManager.initMap("CJ301");
+			this.addChild(Console.getInstance());
 			
 		}
 		private function onStageResize(event:Event):void{

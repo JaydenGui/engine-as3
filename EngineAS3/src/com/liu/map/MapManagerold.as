@@ -1,6 +1,5 @@
 package com.liu.map
 {
-	import com.liu.debug.Console;
 	import com.liu.load.LoadInfo;
 	import com.liu.load.LoadManager;
 	
@@ -19,7 +18,7 @@ package com.liu.map
 	
 	import org.osmf.events.TimeEvent;
 
-	public class MapManager
+	public class MapManagerold
 	{
 		private var _baseUrl:String = 'file:///D:/My%20Documents/map/';
 		/*file:///C:/Documents%20and%20Settings/Administrator/My%20Documents/map/CJ301/CJ301.navmap*/
@@ -36,11 +35,10 @@ package com.liu.map
 		private var _picw:int
 		private var _pich:int; 
 		
-		public function MapManager(stage:Stage,mapContainer:MapContainer)
+		public function MapManagerold(stage:Stage,mapContainer:MapContainer)
 		{
 			this.stage = stage;
 			this._mapContainer = mapContainer;
-			this._mapContainer.mapManager = this;
 		}
 		public function initMap(mapName:String):void{
 			this._mapName = mapName;
@@ -66,86 +64,97 @@ package com.liu.map
 			this._pich = xml.@pich;
 			this._picw = xml.@picw;
 		}
-		
+		private function onLoadmap2(bitmap:Bitmap):void{
+			var bigbitmapdata:BitmapData = new BitmapData(_mapWidth,_mapHeight);
+			//var bitmapdata:BitmapData = bitmap.bitmapData;
+			/*var ma:Matrix = new Matrix()
+			ma.scale(_mapWidth/bitmap.width,_mapHeight/bitmap.height);*/
+			//bigbitmapdata.draw(bitmap);
+			bigbitmapdata.copyPixels(bitmap.bitmapData,new Rectangle(0,0,_mapWidth,_mapHeight),new Point());
+			/*bitmapdata.copyPixels(bigbitmapdata,new Rectangle(0,0,_mapWidth,_mapHeight),new Point());*/
+			bitmap.bitmapData = bigbitmapdata;
+			_mapContainer.mapBitmap = bitmap;
+			//System.gc();
+		}
+		private function onLoadAll():void{
+			for(var i:int=0;i<6;i++){
+				for(var j:int=0;j<10;j++){
+					var key:String = i + "_" + j + ".jpg";
+					var url:String = _baseUrl + _mapName + "/images/" + key;
+					var loadInfo:LoadInfo = new LoadInfo(url,LoadInfo.BITMAP,refreshBitmap,false,new Point(i,j));
+					LoadManager.getInstance().addSingleLoad(loadInfo);
+				}
+			}
+		}
+		private function refreshBitmap(bitmap:Bitmap,p:Point):void{
+			var bitmapdata:BitmapData = _mapContainer.mapBitmap.bitmapData;
+			var newbitmapdata:BitmapData = bitmap.bitmapData;
+			var rec:Rectangle = new Rectangle(0,0,300,300);
+			var newp:Point = new Point(p.y * 300,p.x * 300);
+			bitmapdata.copyPixels(newbitmapdata,rec,newp);
+		}
+		private function onLoadmap3(bitmap:Bitmap):void{
+			//_mapContainer.mainBitmapdata = bitmap.bitmapData;
+		}
 		private function onLoadMiniMap(bitmap:Bitmap):void{
 			_mapContainer.mapBitmap = bitmap;
-			//onLoadAll();
+			onLoadAll();
+		}
+		private function onLoadMiniMap_old(bitmap:Bitmap):void{
+			var time:int = getTimer();
+			var bigbitmapdata:BitmapData = new BitmapData(_mapWidth,_mapHeight);
+			var ma:Matrix = new Matrix()
+			ma.scale(_mapWidth/bitmap.width,_mapHeight/bitmap.height);
+			bigbitmapdata.draw(bitmap,ma);
+			var w:int = Math.ceil(_mapWidth/_picw);
+			var h:int = Math.ceil(_mapHeight/_pich);
+			var key:String;
+			var bitmapdata:BitmapData;
+			var rec:Rectangle = new Rectangle(0,0,_picw,_pich);
+			var point:Point = new Point();
+			for(var i:int=0;i<h;i++){
+				for(var j:int=0;j<w;j++){
+					key = i + "_" + j;
+					bitmapdata = new BitmapData(_picw,_pich,false,0);
+					rec.x = j*_picw;
+					rec.y = i*_pich;
+					bitmapdata.copyPixels(bigbitmapdata,rec,point);
+					_mapdataDIC[key] = bitmapdata;
+					var bitmaps:Bitmap = new Bitmap(bitmapdata);
+					_mapContainer.addBitmap(bitmaps);
+					bitmaps.x = rec.x;
+					bitmaps.y = rec.y;
+				}
+			}
+			trace(getTimer() - time,System.totalMemory);
+			_mapContainer.mapdataDIC = _mapdataDIC;
 		}
 		
 		private function onMapLoaded(event:Event):void{
 			stage.removeChild(MapLoaderInterface.getInstance());
 			_mapContainer.setMapWH(this._mapWidth,this._mapHeight);
 			initListDIC();
-			//_mapContainer.refrushMap(new Point(2000,500));
+			_mapContainer.refrushMap(new Point(2000,500));
 			_mapContainer.addEventListener(Event.ENTER_FRAME,enFrame);
 		}
-		private var allNum:int;
 		private function initListDIC():void{
 			if(_loadListDIC == null)
 				_loadListDIC = new Object;
 			var w:int = Math.ceil(_mapWidth/300);
 			var h:int = Math.ceil(_mapHeight/300);
-			allNum = w*h;
-			for(var i:int=0;i<w;i++){
-				for(var j:int=0;j<h;j++){
+			for(var i:int=0;i<h;i++){
+				for(var j:int=0;j<w;j++){
 					var key:String = i + "_" + j;
 					_loadListDIC[key] = false;
 				}
 			}
-			
-		}
-		
-		private function onLoadAll():void{
-			for(var i:int=0;i<10;i++){
-				for(var j:int=0;j<6;j++){
-					var key:String = i + "_" + j + ".jpg";
-					var url:String = _baseUrl + _mapName + "/newimg/" + key;
-					var loadInfo:LoadInfo = new LoadInfo(url,LoadInfo.BITMAP,refreshBitmap,false,new Point(i,j));
-					LoadManager.getInstance().addSingleLoad(loadInfo);
-				}
-			}
-		}
-		private var loadNum:int;
-		public function onLoadkey(xpos:Number,ypos:Number,wNum:int,hNum:int):void{
-			if(loadNum >= 50){
-				return;
-			}
-			var beginX:int = xpos/300;
-			var beginY:int = ypos/300;
-			
-			var key:String;
-			for(var i:int=0;i<wNum;i++){
-				for(var j:int=0;j<hNum;j++){
-					key = (i+beginX) + "_" + (j+beginY);
-					if(!_loadListDIC.hasOwnProperty(key) || _loadListDIC[key]){
-						continue;
-					}
-					var url:String = _baseUrl + _mapName + "/newimg/" + key + ".jpg";
-					_loadListDIC[key] = true;
-					loadNum++;
-					if(loadNum == 49){
-						Console.getInstance().show("complete");
-					}
-					var loadInfo:LoadInfo = new LoadInfo(url,LoadInfo.BITMAP,refreshBitmap,false,new Point(i+beginX,j+beginY));
-					LoadManager.getInstance().addSingleLoad(loadInfo);
-				}
-			}
-			
-		}
-		
-		private function refreshBitmap(bitmap:Bitmap,p:Point):void{
-			var bitmapdata:BitmapData = _mapContainer.mapBitmap.bitmapData;
-			var newbitmapdata:BitmapData = bitmap.bitmapData;
-			var rec:Rectangle = new Rectangle(0,0,300,300);
-			var newp:Point = new Point(p.x * 300,p.y * 300);
-			bitmapdata.copyPixels(newbitmapdata,rec,newp);
 		}
 		
 		private var num:Number = 340;
 		private var numy:Number = 0;
 		private function enFrame(event:Event):void{
-			num += 1;
-			numy += 1;
+			num += 1.5;
+			numy += 1.5;
 			if(num>=1090){
 				num = 340;
 			}
@@ -153,7 +162,6 @@ package com.liu.map
 				numy = 1;
 			}
 			_mapContainer.refrushMap(new Point(num*_mapWidth/stage.stageWidth,numy*_mapHeight/stage.stageHeight));
-			//_mapContainer.refrushMap(new Point(stage.mouseX*_mapWidth/stage.stageWidth,stage.mouseY*_mapHeight/stage.stageHeight));
 			//t++;
 		}
 		
