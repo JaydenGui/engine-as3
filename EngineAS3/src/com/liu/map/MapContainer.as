@@ -6,9 +6,13 @@ package com.liu.map
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.getTimer;
+	
+	import org.ijelly.findPath.Cell;
+	import org.ijelly.findPath.NavMesh;
 	
 	public class MapContainer extends Sprite implements IResizeDisplayObject
 	{
@@ -25,7 +29,10 @@ package com.liu.map
 		private var _wNum:int;
 		private var _hNum:int;
 		
+		private var _beginPoint:Point;
+		
 		public var mapManager:MapManager;
+		public var nav:NavMesh;
 		
 		public function MapContainer()
 		{
@@ -36,6 +43,7 @@ package com.liu.map
 			this.addChild(_mapSprite);
 			
 			this.addEventListener(Event.ADDED_TO_STAGE,refreshStaticSpriteAry);
+			this.addEventListener(MouseEvent.CLICK,onClick);
 		}
 		private function refreshStaticSpriteAry(event:Event = null):void{
 			this._recW = stage.stageWidth;
@@ -59,8 +67,8 @@ package com.liu.map
 				tempy = this._recH - _mapH;
 			}
 			
-			this._mapBitmap.x = tempx;
-			this._mapBitmap.y = tempy;
+			this._mapBitmap.x =  nav.x = tempx;
+			this._mapBitmap.y = nav.y = tempy;
 			mapManager.onLoadkey(-tempx,-tempy,this._wNum,this._hNum);
 		}
 		
@@ -69,6 +77,17 @@ package com.liu.map
 			refreshStaticSpriteAry();
 		}
 
+		private function onClick(event:MouseEvent):void{
+			if(_beginPoint){
+				var endPoint:Point = new Point(event.localX - this._mapBitmap.x, event.localY - this._mapBitmap.y);
+				nav.findPath(_beginPoint, endPoint);
+				_beginPoint = null;
+			}else{
+				_beginPoint = new Point(event.localX - this._mapBitmap.x, event.localY - this._mapBitmap.y);
+			}
+				
+		}
+		
 		public function setMapWH(w:int,h:int):void{
 			_mapW = w;
 			_mapH = h
@@ -80,7 +99,12 @@ package com.liu.map
 			this._mainBitmapdata = _mapBitmap.bitmapData;
 			this.addChildAt(_mapBitmap,0);
 		}
-
+		
+		public function setNav(cellv:Vector.<Cell>):void{
+			nav = new NavMesh(cellv);
+			this.addChild(nav);
+		}
+		
 		public function get mapBitmap():Bitmap
 		{
 			return _mapBitmap;

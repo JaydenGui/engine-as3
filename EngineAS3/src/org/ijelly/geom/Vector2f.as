@@ -13,7 +13,6 @@ package org.ijelly.geom
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
-	import models.ModelLocator;
 
 	/**
 	 * Vector2f
@@ -33,8 +32,6 @@ package org.ijelly.geom
 		public function set x(value:Number):void
 		{
 			_x = value;
-			if(this._sprite)
-				this.sprite.x = value;
 		}
 
 		public function get y():Number
@@ -45,8 +42,6 @@ package org.ijelly.geom
 		public function set y(value:Number):void
 		{
 			_y = value;
-			if(this._sprite)
-				this._sprite.y = value;
 		}
 
 		
@@ -54,39 +49,8 @@ package org.ijelly.geom
 		{
 			this.x = x;
 			this.y = y;
-			addConsolePoint();
-		}
-		private function addConsolePoint():void{
-			var sp:Sprite = new Sprite;
-			sp.graphics.beginFill(0x0000ff);
-			sp.graphics.drawCircle(0,0,4);
-			sp.graphics.endFill();
-			sp.x = this.x;
-			sp.y = this.y;
-			_sprite = sp;
-			_sprite.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN,onMouseDown);
-			_sprite.addEventListener(MouseEvent.RIGHT_MOUSE_UP,onMouseUp);
-			_sprite.addEventListener(MouseEvent.CLICK,onClick);
-		}
-		private function onMouseDown(event:MouseEvent):void{
-			_sprite.startDrag();
-			_sprite.addEventListener(Event.ENTER_FRAME,onMouseMove);
-		}
-		private function onClick(event:MouseEvent):void{
-			if(ModelLocator.getInstance().addState == 2){
-				this.dispatchEvent(new Event(Event.REMOVED));
-			}
 		}
 		
-		private function onMouseUp(event:MouseEvent):void{
-			_sprite.stopDrag();
-			_sprite.removeEventListener(Event.ENTER_FRAME,onMouseMove);
-		}
-		private function onMouseMove(evnet:Event):void{
-			this.x = _sprite.x;
-			this.y = _sprite.y;
-			this.dispatchEvent(new Event(Event.CHANGE));
-		}
 		public function setVector2f(vec:Vector2f):void
 		{
 			this.x = vec.x;
@@ -489,18 +453,8 @@ package org.ijelly.geom
 			sp.addChild(txt);
 		}
 		
-		override public function toString():String{
+		public function toString():String{
 			return "("+x+","+y+")";
-		}
-
-		public function get sprite():Sprite
-		{
-			return _sprite;
-		}
-
-		public function set sprite(value:Sprite):void
-		{
-			_sprite = value;
 		}
 		
 		public function writeFile():String{

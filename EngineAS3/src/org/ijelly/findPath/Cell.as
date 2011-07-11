@@ -29,6 +29,8 @@ package org.ijelly.findPath
 		public var parent:Cell;
 		public var countPoint:Vector2f;
 		
+		public var bolckAry:Vector.<int>;
+		
 		public var m_ArrivalWall:int; // the side we arrived through.
 		public var m_WallMidpoint:Vector.<Vector2f>; // 每个边的中点
 		public var m_WallDistance:Vector.<Number>; // the distances between each wall midpoint of sides (0-1, 1-2, 2-0)
@@ -80,6 +82,7 @@ package org.ijelly.findPath
 			
 			wallVector = m_WallMidpoint[2].subtract(m_WallMidpoint[0]);
 			m_WallDistance[2] = wallVector.length();
+			
 		}
 
 		/**
@@ -202,63 +205,6 @@ package org.ijelly.findPath
 			h = Math.sqrt(XDelta*XDelta + YDelta*YDelta);
 		}
 		
-		/**
-		 * 测试直线与该cell（三角形）的关系
-		 * @param motionPath
-		 * @return ClassifyResult对象
-		 */		
-//		public function classifyPathToCell(motionPath:Line2D):ClassifyResult {
-//			 trace("Cell:"+this);
-//			 trace("     Path:"+motionPath);
-//			var interiorCount:int = 0;	//记录点在三角形三边右面的次数，如果==3则说明点在三角形内部
-//			var result:ClassifyResult = new ClassifyResult();
-//			
-//			// 分别检测直线与三角形的三个边
-//			for (var i:int = 0; i < 3; ++i) {
-//				////////////////////////////////////////////
-//				// 由于三角形的边是顺时针方向，如果点在所有边的右面则是在三角形内部；
-//				// 如果点在任何一边左面则点在三角形外面
-//				////////////////////////////////////////////
-//				var end:int = sides[i].classifyPoint(motionPath.getPointB(), EPSILON);
-//				// 直线的 终点 不在边的 右面
-//				if (end != PointClassification.RIGHT_SIDE) { //	&& end != Line2D.POINT_CLASSIFICATION.ON_LINE) {
-//					//  而且 直线的 起点 不在边的 左面
-//					if (sides[i].classifyPoint(motionPath.getPointA(), EPSILON) != PointClassification.LEFT_SIDE) {
-//						if (end == PointClassification.ON_LINE) {
-//							result.cellIndex = _links[i];
-//							result.side = i;
-//							result.result = PathResult.ENDING_CELL;
-//							trace("exits this cell");
-//							return result;
-//						}
-//						// 检测是否与边相交，并保存交点到result
-//						var intersectResult:int = motionPath.intersection(sides[i], result.intersection);
-//						if (intersectResult == LineClassification.SEGMENTS_INTERSECT || intersectResult == LineClassification.A_BISECTS_B) {
-//							// 记录下一个邻接三角形的索引（如果没有则为-1）和相交的边
-//							result.cellIndex = _links[i];
-//							result.side = i;
-//							result.result = PathResult.EXITING_CELL;
-//							trace("exits this cell");
-//							return result;
-//						}
-//					}
-//				} else {
-//					// 点在三角形右面，增加计数
-//					interiorCount++;
-//				}
-//			}
-//			
-//			// 点在所有边的右面，即点在三角形内部
-//			if (interiorCount == 3) {
-//				// System.out.println(" ends within this cell");
-//				result.result = PathResult.ENDING_CELL;
-//				return result;
-//			}
-//			// System.out.println("No intersection with this cell at all");
-//			// 没有任何关系
-//			return result;
-//			// return (PATH_RESULT.NO_RELATIONSHIP);
-//		}
 
 		/**
 		 * 绘制网格索引

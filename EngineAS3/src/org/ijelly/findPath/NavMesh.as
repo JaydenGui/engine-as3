@@ -291,8 +291,8 @@ package org.ijelly.findPath
 							adjacentTmp.computeH(startPos,adjacentTmp.countPoint);
 							
 							
-							g.moveTo(currNode.countPoint.x,currNode.countPoint.y);
-							g.lineTo(adjacentTmp.countPoint.x,adjacentTmp.countPoint.y);
+							//g.moveTo(currNode.countPoint.x,currNode.countPoint.y);
+							//g.lineTo(adjacentTmp.countPoint.x,adjacentTmp.countPoint.y);
 							//放入开放列表并排序
 							openList.put(adjacentTmp);
 							
@@ -351,17 +351,17 @@ package org.ijelly.findPath
 						
 			while (st.parent != null) {
 //				trace("&&&&&", st.parent);
-				this.graphics.beginFill(0x0000ff, 0.2);
+				/*this.graphics.beginFill(0x0000ff, 0.2);
 				st.draw(this.graphics);
-				this.graphics.endFill();
+				this.graphics.endFill();*/
 				
 				pth.push(st.parent);
 				st = st.parent;
 			}
 			
-			this.graphics.beginFill(0x0000ff, 0.2);
+			/*this.graphics.beginFill(0x0000ff, 0.2);
 			st.draw(this.graphics);
-			this.graphics.endFill();
+			this.graphics.endFill();*/
 			
 			trace(pth);
 			return pth;
@@ -394,28 +394,14 @@ package org.ijelly.findPath
 			}
 			
 			//获取路点
+			
 			var wayPoint:WayPoint = new WayPoint(cellPath[0], start);
-			wayPoint.active = true;
-			waypathArr.push(wayPoint);
-			while (true) {
+			while (!wayPoint.position.equals(end)) {
 				wayPoint = this.getFurthestWayPoint(wayPoint, cellPath, end);
-				if(waypathArr[waypathArr.length-1].active){
-					waypathArr.push(wayPoint);
-				}else{
-					fixedWayPoint(waypathArr[waypathArr.length-2],waypathArr[waypathArr.length-1],wayPoint,cellPath);
-					wayPoint = waypathArr[waypathArr.length-1];
-					wayPoint.active = true;
-				}
-				if(wayPoint.position.equals(end)){
-					break;
-				}
-				//pathArr.push(wayPoint.position);
+				pathArr.push(wayPoint.position);
 			}
 			
-			for(var i:int=0;i<waypathArr.length;i++){
-				pathArr.push(waypathArr[i].position);
-			}
-			pathArr.push(end.toPoint());
+			//			pathArr.push(end.toPoint());
 			return pathArr;
 		}
 		private function fixedWayPoint(first:WayPoint,second:WayPoint,third:WayPoint,cellPath:Vector.<Cell>):void{
