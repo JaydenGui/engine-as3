@@ -1,6 +1,7 @@
 package com.liu.debug
 {
 	import flash.display.Sprite;
+	import flash.filters.GlowFilter;
 	import flash.text.TextField;
 	
 	public class Console extends Sprite
@@ -23,6 +24,7 @@ package com.liu.debug
 			txt.width = 200;
 			txt.height = 80;
 			this.addChild(txt);
+			txt.filters = [new GlowFilter(0xffffff,1,2,2,255,1)];
 		}
 		public function show(str:String):void{
 			txt.text = str;
