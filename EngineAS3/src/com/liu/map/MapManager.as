@@ -21,7 +21,7 @@ package com.liu.map
 
 	public class MapManager
 	{
-		private var _baseUrl:String = 'file:///D:/My%20Documents/map/';
+		private var _baseUrl:String = 'file:///C:/Documents%20and%20Settings/Administrator/My%20Documents/map/';
 		/*file:///C:/Documents%20and%20Settings/Administrator/My%20Documents/map/CJ301/CJ301.navmap*/
 		/*file:///D:/My%20Documents/map/CJ301/CJ301.mapedit*/
 		private var _mapName:String = 'CJ301';
@@ -35,6 +35,10 @@ package com.liu.map
 		private var _mapHeight:int;
 		private var _picw:int
 		private var _pich:int; 
+		
+		private var _loadNum:int;
+		private var _allNum:int;
+		private var _currentPoint:String;
 		
 		public function MapManager(stage:Stage,mapContainer:MapContainer)
 		{
@@ -79,13 +83,12 @@ package com.liu.map
 			//_mapContainer.refrushMap(new Point(2000,500));
 			_mapContainer.addEventListener(Event.ENTER_FRAME,enFrame);
 		}
-		private var allNum:int;
 		private function initListDIC():void{
 			if(_loadListDIC == null)
 				_loadListDIC = new Object;
 			var w:int = Math.ceil(_mapWidth/300);
 			var h:int = Math.ceil(_mapHeight/300);
-			allNum = w*h;
+			_allNum = w*h;
 			for(var i:int=0;i<w;i++){
 				for(var j:int=0;j<h;j++){
 					var key:String = i + "_" + j;
@@ -105,15 +108,25 @@ package com.liu.map
 				}
 			}
 		}
-		private var loadNum:int;
 		public function onLoadkey(xpos:Number,ypos:Number,wNum:int,hNum:int):void{
-			if(loadNum >= 50){
+			if(_loadNum >= _allNum){
+				Console.getInstance().show("加载全部完成");
 				return;
 			}
+			var key:String;
 			var beginX:int = xpos/300;
 			var beginY:int = ypos/300;
 			
-			var key:String;
+			key = beginX + "_" + beginY;
+			
+			if(_currentPoint != key){
+				Console.getInstance().show("加载");
+				_currentPoint = key;
+			}else{
+				Console.getInstance().show("空闲");
+				return;
+			}
+			
 			for(var i:int=0;i<wNum;i++){
 				for(var j:int=0;j<hNum;j++){
 					key = (i+beginX) + "_" + (j+beginY);
@@ -122,8 +135,8 @@ package com.liu.map
 					}
 					var url:String = _baseUrl + _mapName + "/newimg/" + key + ".jpg";
 					_loadListDIC[key] = true;
-					loadNum++;
-					if(loadNum == 49){
+					_loadNum++;
+					if(_loadNum == 49){
 						Console.getInstance().show("complete");
 					}
 					var loadInfo:LoadInfo = new LoadInfo(url,LoadInfo.BITMAP,refreshBitmap,false,new Point(i+beginX,j+beginY));
