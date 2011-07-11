@@ -20,11 +20,10 @@ package org.ijelly.geom
 	 * @langversion ActionScript 3.0
 	 * @playerversion Flash 10.0
 	 */
-	public class Vector2f extends EventDispatcher
+	public class Vector2f
 	{
 		private var _x:Number;
 		private var _y:Number;
-		private var _sprite:Sprite;
 
 		public function get x():Number
 		{
