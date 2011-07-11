@@ -80,7 +80,6 @@ package com.liu.map
 			stage.removeChild(MapLoaderInterface.getInstance());
 			_mapContainer.setMapWH(this._mapWidth,this._mapHeight);
 			initListDIC();
-			//_mapContainer.refrushMap(new Point(2000,500));
 			_mapContainer.addEventListener(Event.ENTER_FRAME,enFrame);
 		}
 		private function initListDIC():void{
