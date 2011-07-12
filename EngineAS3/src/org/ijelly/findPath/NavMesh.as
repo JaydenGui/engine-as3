@@ -4,6 +4,8 @@
 */
 package org.ijelly.findPath
 {
+	import com.liu.debug.Console;
+	
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.geom.Point;
@@ -11,6 +13,7 @@ package org.ijelly.findPath
 	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
 	
+	import org.ijelly.geom.Block;
 	import org.ijelly.geom.Line2D;
 	import org.ijelly.geom.PointClassification;
 	import org.ijelly.geom.Vector2f;
@@ -34,6 +37,8 @@ package org.ijelly.findPath
 		private var openList:Heap;
 		private var closeList:Array;
 		public var g:Graphics;
+		private var cellPath:Vector.<Cell>;
+		public var blockV:Vector.<Block> = new Vector.<Block>;
 		public function NavMesh(cellVector:Vector.<Cell>)
 		{
 			m_CellVector = cellVector;
@@ -83,21 +88,138 @@ package org.ijelly.findPath
 			} else {
 				outPath = buildPath(startCell, startPos, endCell, endPos);
 			}
-			
-			trace("寻路时间：", getTimer()-stime);
-			trace(outPath);
+			outPath[0] = new Vector2f(outPath[0].x,outPath[0].y);
+			//trace();
+			outPath = calculateBlock(outPath);
+			var string:String = "寻路时间："+(getTimer()-stime);
+			Console.getInstance().show(string);
+			//trace(outPath);
 			//画路径线
 			if (outPath != null && outPath.length > 1) {
 //				trace("画路径线");
-				this.graphics.lineStyle(2, 0xffff00);
+				if(outPath[0].isIN)
+					this.graphics.lineStyle(2, 0xffff00,0.1);
+				else
+					this.graphics.lineStyle(2, 0xffff00,1);
 				this.graphics.moveTo(outPath[0].x, outPath[0].y);
 				for (var m:int=1; m<outPath.length; m++) {
 					this.graphics.lineTo(outPath[m].x, outPath[m].y);
+					if(outPath[m].isIN)
+						this.graphics.lineStyle(2, 0xffff00,0.1);
+					else
+						this.graphics.lineStyle(2, 0xffff00,1);
 				}
 			}
-			
 			return outPath;
 		}
+		
+		private function calculateBlock(lineAry:Array):Array{
+			var calculateBlock:Object = new Object;
+			var cell:Cell;
+			var next:Boolean;
+			for(var i:int=0;i<cellPath.length;i++){
+				if(cellPath[i].bolckAry){
+					for(var j:int=0;j<cellPath[i].bolckAry.length;j++){
+						calculateBlock[cellPath[i].bolckAry[j]] = blockV[cellPath[i].bolckAry[j]];
+						next = true;
+					}
+				}
+			}
+			if(!next){
+				return lineAry;
+			}			
+			var resultAry:Array = new Array;
+			var beginFlag:Boolean = true;
+			for(i = 0;i<lineAry.length-1;i++){
+				var ary:Array = new Array;
+				var beginPoint:Vector2f = lineAry[i];
+				var endPoint:Vector2f = lineAry[i+1];
+				var l:Line2D = new Line2D(beginPoint,endPoint);
+				//trace("L为" + "(" + beginPoint.x + "," + beginPoint.y + ")>>>(" + endPoint.x + "," + endPoint.y + ")");
+				
+				for each(var obj:Block in calculateBlock){
+					var PolV:Vector.<Line2D> = obj.lineV;
+					var insertAry:Array = getInsert(l,PolV);
+					resortPoint(beginPoint,endPoint,insertAry);
+					beginFlag = processInOut(insertAry,beginFlag);
+					if(insertAry.length == 0){
+						continue;
+					}
+					if(insertAry.length%2){
+						endPoint.isIN = !beginPoint.isIN;
+					}else{
+						endPoint.isIN = beginPoint.isIN;
+					}
+					
+					ary = ary.concat(insertAry);
+				}
+				
+				if(beginPoint == lineAry[0]){
+					ary = linkPoint(beginPoint,ary,endPoint);
+				}else{
+					ary = linkPoint(null,ary,endPoint);
+				}
+				
+				
+				resultAry = resultAry.concat(ary);				
+			}
+			return resultAry;
+		}
+		
+		public function processInOut(ary:Array,beginFlag:Boolean):Boolean{
+			for(var i:int;i<ary.length;i++){
+				ary[i].isIN = beginFlag;
+				beginFlag = !beginFlag;
+			}
+			return beginFlag;
+		}
+		public function linkPoint(startP:Vector2f,ary:Array,endP:Vector2f):Array{
+			var newAry:Array = new Array;
+			if(startP != null)
+				newAry.push(startP);
+			for(var i:int;i<ary.length;i++){
+				newAry.push(ary[i]);
+			}
+			newAry.push(endP);
+			return newAry;
+		}
+		public function resortPoint(beginPoint:Vector2f,endPoint:Vector2f,middleList:Array):void{
+			var flagX:int = endPoint.x - beginPoint.x;
+			var flagY:int = endPoint.y - beginPoint.y;
+			var sortFlag:Object;
+			if(flagX == 0){
+				if(flagY > 0){
+					sortFlag = Array.NUMERIC;
+				}else{
+					sortFlag = Array.DESCENDING | Array.NUMERIC;
+				}
+				middleList.sortOn("y",sortFlag);
+			}else{
+				if(flagX > 0){
+					sortFlag = Array.NUMERIC;
+				}else{
+					sortFlag = Array.DESCENDING | Array.NUMERIC;
+				}
+				middleList.sortOn("x",sortFlag);
+			}
+		}
+		public function getInsert(line:Line2D,lineAry:Vector.<Line2D>):Array{
+			var ary:Array = new Array;
+			for(var i:int;i<lineAry.length;i++){
+				var p:Vector2f = new Vector2f();
+				var testLine:Line2D = lineAry[i];
+				//trace("测试线段" + "(" + testLine.pointA.x + "," + testLine.pointA.y + ")>>>(" + testLine.pointB.x + "," + testLine.pointB.y + ")");
+				var result:int = line.intersection(testLine,p)
+				//trace("result " + result);
+				if(result==2){
+					p.x = int(p.x);
+					p.y = int(p.y);
+					ary.push(p);
+				}
+			}
+			return ary;
+		}
+		
 		
 		/**
 		 * 计算F的估价值
@@ -363,7 +485,7 @@ package org.ijelly.findPath
 			st.draw(this.graphics);
 			this.graphics.endFill();*/
 			
-			trace(pth);
+			//trace(pth);
 			return pth;
 		}
 		
@@ -375,7 +497,7 @@ package org.ijelly.findPath
 		 */		
 		private function getPath(start:Vector2f, end:Vector2f):Array {
 			//经过的三角形
-			var cellPath:Vector.<Cell> = getCellPath();
+			cellPath= getCellPath();
 			//没有路径
 			if (cellPath == null || cellPath.length == 0) {
 				return null;
@@ -506,7 +628,7 @@ package org.ijelly.findPath
 			}
 			return new WayPoint(cellPath[cellPath.length-1], end);	//终点
 		}
-		public function resortPoint(beginPoint:Vector2f,endPoint:Vector2f,middleList:Array):void{
+		/*public function resortPoint(beginPoint:Vector2f,endPoint:Vector2f,middleList:Array):void{
 			var flagX:int = endPoint.x - beginPoint.x;
 			var flagY:int = endPoint.y - beginPoint.y;
 			var sortFlag:Object;
@@ -525,7 +647,7 @@ package org.ijelly.findPath
 				}
 				middleList.sortOn("x",sortFlag);
 			}
-		}
+		}*/
 		public function clone(source:Object):*
             {
                 registerClassAlias("org.blch.findPath::Cell",Cell);

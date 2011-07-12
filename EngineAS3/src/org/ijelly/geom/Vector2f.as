@@ -23,6 +23,7 @@ package org.ijelly.geom
 	{
 		private var _x:Number;
 		private var _y:Number;
+		public var isIN:Boolean;
 
 		public function get x():Number
 		{

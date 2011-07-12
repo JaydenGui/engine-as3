@@ -13,6 +13,7 @@ package com.liu.map
 	
 	import org.ijelly.findPath.Cell;
 	import org.ijelly.findPath.NavMesh;
+	import org.ijelly.geom.Block;
 	
 	public class MapContainer extends Sprite implements IResizeDisplayObject
 	{
@@ -100,8 +101,9 @@ package com.liu.map
 			this.addChildAt(_mapBitmap,0);
 		}
 		
-		public function setNav(cellv:Vector.<Cell>):void{
+		public function setNav(cellv:Vector.<Cell>,blockV:Vector.<Block>):void{
 			nav = new NavMesh(cellv);
+			nav.blockV = blockV;
 			this.addChild(nav);
 		}
 		

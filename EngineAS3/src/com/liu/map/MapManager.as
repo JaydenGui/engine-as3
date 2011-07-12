@@ -19,13 +19,14 @@ package com.liu.map
 	
 	import org.ijelly.findPath.Cell;
 	import org.ijelly.findPath.NavMesh;
+	import org.ijelly.geom.Block;
 	import org.ijelly.geom.Triangle;
 	import org.ijelly.geom.Vector2f;
 	import org.osmf.events.TimeEvent;
 
 	public class MapManager
 	{
-		private var _baseUrl:String = 'file:///D:/My%20Documents/map/';
+		private var _baseUrl:String = 'file:///C:/Documents%20and%20Settings/Administrator/My%20Documents/map/';
 		/*file:///C:/Documents%20and%20Settings/Administrator/My%20Documents/map/CJ301/CJ301.navmap*/
 		/*file:///D:/My%20Documents/map/CJ301/CJ301.mapedit*/
 		private var _mapName:String = 'CJ301';
@@ -45,7 +46,7 @@ package com.liu.map
 		private var _currentPoint:String;
 		
 		private var _cellV:Vector.<Cell> = new Vector.<Cell>();
-		private var _blockV:Vector.<Vector.<Vector2f>> = new Vector.<Vector.<Vector2f>>;
+		private var _blockV:Vector.<Block> = new Vector.<Block>;
 		
 		public function MapManager(stage:Stage,mapContainer:MapContainer)
 		{
@@ -109,9 +110,9 @@ package com.liu.map
 					var v2f:Vector2f = new Vector2f(bAry[0],bAry[1]);
 					vAry.push(v2f);
 				}
-				_blockV.push(vAry);
+				_blockV.push(new Block(vAry));
 			}
-			_mapContainer.setNav(_cellV);
+			_mapContainer.setNav(_cellV,_blockV);
 		}
 		public function linkCells(pv:Vector.<Cell>):void {
 			for each (var pCellA:Cell in pv) {
@@ -161,7 +162,7 @@ package com.liu.map
 		}
 		public function onLoadkey(xpos:Number,ypos:Number,wNum:int,hNum:int):void{
 			if(_loadNum >= _allNum){
-				Console.getInstance().show("加载全部完成");
+				//Console.getInstance().show("加载全部完成");
 				return;
 			}
 			var key:String;
