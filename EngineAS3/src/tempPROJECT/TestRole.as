@@ -7,8 +7,12 @@ package
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.events.TimerEvent;
 	import flash.geom.Rectangle;
 	import flash.net.URLRequest;
+	import flash.utils.Timer;
+	
+	import org.osmf.events.TimeEvent;
 	
 	import view.RoleBitmap;
 	
@@ -20,6 +24,8 @@ package
 		private var allList:Vector.<Vector.<RoleBitmap>>;
 		private var allRoleList:Vector.<RoleBitmap>;
 		private var defaultBimtap:Array = new Array;
+		
+		private var displayList:Vector.<RoleBitmap>;
 		
 		private var mainRec:Rectangle;
 		public function TestRole()
@@ -62,9 +68,15 @@ package
 			
 			allList = new Vector.<Vector.<RoleBitmap>>;
 			allRoleList = new Vector.<RoleBitmap>;
+			displayList = new Vector.<RoleBitmap>;
 			
 			var bitmap:Bitmap = event.target.content;
 			addRole(bitmap);
+			
+			var timer:Timer = new Timer(1000);
+			timer.addEventListener(TimerEvent.TIMER,changeDisplay);
+			timer.start();
+			
 			this.addEventListener(Event.ENTER_FRAME,onEnterFrame);
 		}
 		private function addRole(bitmap:Bitmap):void{
@@ -85,21 +97,62 @@ package
 				
 			}
 		}
+		
+		private function changeDisplay(event:TimerEvent):void{
+			var tempV:Vector.<RoleBitmap> = new Vector.<RoleBitmap>;
+			for(var i:int=0;i<allRoleList.length;i++){
+				var role:RoleBitmap = allRoleList[i];
+				/*if(role.getRect(this).intersects(mainRec)){
+					tempV.push(role);
+				}*/
+				if(role.x < 1366 && role.y <700){
+					tempV.push(role);
+				}
+				
+			}
+			var tArr:Vector.<RoleBitmap> = toSetArray(displayList,tempV),
+				t2Arr:Vector.<RoleBitmap> = toSetArray(tempV,displayList);
+			for each(role in tArr)
+			{
+				this.removeChild(role);
+			} 
+			for each(var r1:RoleBitmap in t2Arr)
+			{
+				this.addChild(r1);
+			}	
+			displayList = tempV;
+		}
+		private function toSetArray (arr:Vector.<RoleBitmap> ,arr1:Vector.<RoleBitmap> ):Vector.<RoleBitmap> 
+		{
+			var l:int = arr.length;
+			var temp:Vector.<RoleBitmap> =new Vector.<RoleBitmap>;
+			for(var i:int=0;i<l;i++)
+			{
+				if(arr1.indexOf(arr[i])==-1)
+					temp[temp.length] = arr[i];  
+			}
+			return temp; 
+		}
+		
 		private var flag:int;
 		private var _roleList:Vector.<RoleBitmap> 
 		private function onEnterFrame(event:Event):void{
-			_roleList = allList[flag];
+			/*_roleList = allList[flag];
 			for each(var role:RoleBitmap in _roleList){
 				role.render();
 			}
 			flag++;
 			if(flag == 5){
 				flag = 0;
+			}*/
+			
+			for each(var role:RoleBitmap in displayList){
+				role.render();
 			}
 			
 			for each(role in allRoleList){
-				role.x ++;
-				role.y ++;
+				role.x +=0.3;
+				role.y +=0.3;
 				if(role.x > 2500){
 					role.x = 0;
 				}

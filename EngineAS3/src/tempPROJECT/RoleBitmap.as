@@ -29,16 +29,16 @@ package view
 		}
 		
 		public function render():void{
-			//_interval++;
-			//if(_interval == 5){
+			_interval++;
+			if(_interval == 5){
 				_frame++;
 				if(_frame == 8){
 					_frame = 0;
 				}
 				_rec.x = 120*_frame;
 				this.bitmapData.copyPixels(_mainBitmapdata,_rec,_p);
-				//_interval = 0;
-			//}
+				_interval = 0;
+			}
 				this.x+=4;
 				this.y+=4;
 				/*if(this.x > 2500){
