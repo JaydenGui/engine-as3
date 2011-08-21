@@ -1,10 +1,10 @@
 package
 {
-	import com.liu.debug.Console;
-	import com.liu.map.IResizeDisplayObject;
-	import com.liu.map.MapContainer;
-	import com.liu.map.MapLoaderInterface;
-	import com.liu.map.MapManager;
+	import utils.debug.Console;
+	import utils.map.IResizeDisplayObject;
+	import utils.map.MapContainer;
+	import utils.map.MapLoaderInterface;
+	import utils.map.MapManager;
 	
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
