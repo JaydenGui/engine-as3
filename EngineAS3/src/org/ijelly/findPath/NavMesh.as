@@ -4,7 +4,7 @@
 */
 package org.ijelly.findPath
 {
-	import com.liu.debug.Console;
+	import utils.debug.Console;
 	
 	import flash.display.Graphics;
 	import flash.display.Sprite;
