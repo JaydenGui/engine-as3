@@ -217,8 +217,8 @@ package com.liu.map
 			if(numy > 800){
 				numy = 1;
 			}
-			//_mapContainer.refrushMap(new Point(num*_mapWidth/stage.stageWidth,numy*_mapHeight/stage.stageHeight));
-			_mapContainer.refrushMap(new Point(stage.mouseX*_mapWidth/stage.stageWidth,stage.mouseY*_mapHeight/stage.stageHeight));
+			_mapContainer.refrushMap(new Point(num*_mapWidth/stage.stageWidth,numy*_mapHeight/stage.stageHeight));
+			//_mapContainer.refrushMap(new Point(stage.mouseX*_mapWidth/stage.stageWidth,stage.mouseY*_mapHeight/stage.stageHeight));
 			//t++;
 		}
 		
