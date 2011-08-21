@@ -8,9 +8,8 @@ package utils.role
 	
 	import utils.load.LoadInfo;
 	import utils.load.LoadManager;
-	
-	import view.load.BitmapdataPool;
-	import view.load.BitmapdataSource;
+	import utils.pool.BitmapdataPool;
+	import utils.pool.BitmapdataSource;
 	
 	public class RoleBitmap extends Bitmap
 	{

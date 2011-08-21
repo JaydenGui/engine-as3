@@ -1,14 +1,11 @@
 package utils.map
 {
-	import utils.debug.Console;
-	import utils.load.LoadInfo;
-	import utils.load.LoadManager;
-	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.events.TimerEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
@@ -23,8 +20,12 @@ package utils.map
 	import org.ijelly.geom.Triangle;
 	import org.ijelly.geom.Vector2f;
 	import org.osmf.events.TimeEvent;
+	
+	import utils.debug.Console;
+	import utils.load.LoadInfo;
+	import utils.load.LoadManager;
 
-	public class MapManager
+	public class MapManager extends EventDispatcher
 	{
 		private var _baseUrl:String = 'file:///D:/My%20Documents/map/';
 		/*file:///C:/Documents%20and%20Settings/Administrator/My%20Documents/map/CJ301/CJ301.navmap*/
@@ -133,7 +134,8 @@ package utils.map
 			stage.removeChild(MapLoaderInterface.getInstance());
 			_mapContainer.setMapWH(this._mapWidth,this._mapHeight);
 			initListDIC();
-			_mapContainer.addEventListener(Event.ENTER_FRAME,enFrame);
+			//_mapContainer.addEventListener(Event.ENTER_FRAME,enFrame);
+			this.dispatchEvent(new Event(Event.INIT));
 		}
 		private function initListDIC():void{
 			if(_loadListDIC == null)

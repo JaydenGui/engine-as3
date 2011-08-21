@@ -71,8 +71,8 @@ package utils.role
 		
 		public function addTostage(container:DisplayObjectContainer):void{
 			//container.addChild(_txt);
-			container.addChildAt(_rolebitmap,0);
-			container.addChildAt(_txtbitmap,0);
+			container.addChild(_rolebitmap);
+			container.addChild(_txtbitmap);
 			this._parent = container;
 		}
 		
