@@ -14,8 +14,8 @@ package utils.role
 		private var _info:Object;
 		private var _x:int;
 		private var _y:int;
-		private var _baseX:int;
-		private var _baseY:int;
+		private var _baseX:Number;
+		private var _baseY:Number;
 		private var _alpha:Number;
 		private var _rect:Rectangle;
 		private var _rolebitmap:RoleBitmap;
@@ -139,22 +139,22 @@ package utils.role
 			this.baseX += vy;
 		}
 
-		public function get baseX():int
+		public function get baseX():Number
 		{
 			return _baseX;
 		}
 
-		public function set baseX(value:int):void
+		public function set baseX(value:Number):void
 		{
 			_baseX = value;
 		}
 
-		public function get baseY():int
+		public function get baseY():Number
 		{
 			return _baseY;
 		}
 
-		public function set baseY(value:int):void
+		public function set baseY(value:Number):void
 		{
 			_baseY = value;
 		}

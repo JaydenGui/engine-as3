@@ -69,7 +69,7 @@ package
 		}
 		private function render(event:Event):void{
 			hero.render();
-			//hero.go();
+			hero.go();
 			//mapContainer.refrushMap(new Point(hero.x,hero.y));
 		}
 	}
