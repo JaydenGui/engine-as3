@@ -27,7 +27,7 @@ package utils.map
 
 	public class MapManager extends EventDispatcher
 	{
-		private var _baseUrl:String = 'file:///D:/My%20Documents/map/';
+		private var _baseUrl:String = 'file:///C:/Documents%20and%20Settings/Administrator/My%20Documents/map/';
 		/*file:///C:/Documents%20and%20Settings/Administrator/My%20Documents/map/CJ301/CJ301.navmap*/
 		/*file:///D:/My%20Documents/map/CJ301/CJ301.mapedit*/
 		private var _mapName:String = 'CJ301';
@@ -219,7 +219,7 @@ package utils.map
 			if(numy > 800){
 				numy = 1;
 			}
-			_mapContainer.refrushMap(new Point(num*_mapWidth/stage.stageWidth,numy*_mapHeight/stage.stageHeight));
+			//_mapContainer.refrushMap(new Point(num*_mapWidth/stage.stageWidth,numy*_mapHeight/stage.stageHeight));
 			//_mapContainer.refrushMap(new Point(stage.mouseX*_mapWidth/stage.stageWidth,stage.mouseY*_mapHeight/stage.stageHeight));
 			//t++;
 		}

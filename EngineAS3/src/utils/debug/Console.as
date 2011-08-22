@@ -8,6 +8,7 @@ package utils.debug
 	{
 		private var txt:TextField;
 		private static var _instance:Console;
+		private var fps:FPSMeter;
 		public function Console()
 		{
 			if(_instance!=null) throw new Error("Error: Singletons can only be instantiated via getInstance() method!");  
@@ -25,6 +26,10 @@ package utils.debug
 			txt.height = 80;
 			this.addChild(txt);
 			txt.filters = [new GlowFilter(0xffffff,1,2,2,255,1)];
+			
+			fps = new FPSMeter;
+			this.addChild(fps);
+			fps.x = 100;
 		}
 		public function show(str:String):void{
 			txt.text = str;

@@ -39,16 +39,22 @@ package
 			//mapContainer.refrushMap(new Point(100,100));
 		}
 		private function onMapInit(event:Event):void{
-			mapContainer.refrushMap(new Point(500,500));
-			hero = new Hero;
-			hero.x = stage.stageWidth/2;
-			hero.y = stage.stageHeight/2;
+			//mapContainer.refrushMap(new Point(500,500));
+			hero = new Hero(mapContainer);
+			hero.vx = 3;
+			hero.vy = 3;
 			
 			hero.dircet = 8*Math.random();
 			var obj:Object = new Object;
-			obj.title = "牛的一逼";
+			obj.title = "血池地狱";
 			obj.image = ConstPool.roleAry[int(16*Math.random())];
 			hero.info = obj;
+			
+			hero.baseX = 740;
+			hero.baseY = 220;
+			mapContainer.hero = hero;
+			mapContainer.refrushMap(740,220);
+			
 			
 			hero.addTostage(this);
 			this.addEventListener(Event.ENTER_FRAME,render);
@@ -63,6 +69,8 @@ package
 		}
 		private function render(event:Event):void{
 			hero.render();
+			//hero.go();
+			//mapContainer.refrushMap(new Point(hero.x,hero.y));
 		}
 	}
 }

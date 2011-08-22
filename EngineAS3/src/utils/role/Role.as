@@ -14,6 +14,8 @@ package utils.role
 		private var _info:Object;
 		private var _x:int;
 		private var _y:int;
+		private var _baseX:int;
+		private var _baseY:int;
 		private var _alpha:Number;
 		private var _rect:Rectangle;
 		private var _rolebitmap:RoleBitmap;
@@ -44,10 +46,8 @@ package utils.role
 		public function set x(value:int):void
 		{
 			_x = value;
-			_txtbitmap.x = _rolebitmap.x = value;	
-			//_txt.x = _rolebitmap.x = value;	
-			
-			_rect.x = value;
+			_txtbitmap.x = _x - 30;
+			_rolebitmap.x = _x - 60;	
 		}
 
 		public function get y():int
@@ -58,10 +58,7 @@ package utils.role
 		public function set y(value:int):void
 		{
 			_y = value;
-			_txtbitmap.y = _rolebitmap.y = value;
-			//_txt.y = _rolebitmap.y = value;
-			
-			_rect.y = value;
+			_txtbitmap.y = _rolebitmap.y = _y-60;
 		}
 
 		public function set alpha(value:Number):void
@@ -134,6 +131,34 @@ package utils.role
 		{
 			_rolebitmap.dircet = value;
 		}
+		public function move():void{
+			
+		}
+		public function go():void{
+			this.baseX += vx;
+			this.baseX += vy;
+		}
+
+		public function get baseX():int
+		{
+			return _baseX;
+		}
+
+		public function set baseX(value:int):void
+		{
+			_baseX = value;
+		}
+
+		public function get baseY():int
+		{
+			return _baseY;
+		}
+
+		public function set baseY(value:int):void
+		{
+			_baseY = value;
+		}
+		
 
 	}
 }

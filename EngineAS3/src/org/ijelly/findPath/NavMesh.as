@@ -96,7 +96,6 @@ package org.ijelly.findPath
 			//trace(outPath);
 			//画路径线
 			if (outPath != null && outPath.length > 1) {
-//				trace("画路径线");
 				if(outPath[0].isIN)
 					this.graphics.lineStyle(2, 0xffff00,0.1);
 				else

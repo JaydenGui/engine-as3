@@ -1,7 +1,5 @@
 package utils.map
 {
-	import utils.element.StaticSprite;
-	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
@@ -14,6 +12,9 @@ package utils.map
 	import org.ijelly.findPath.Cell;
 	import org.ijelly.findPath.NavMesh;
 	import org.ijelly.geom.Block;
+	
+	import utils.element.StaticSprite;
+	import utils.role.Hero;
 	
 	public class MapContainer extends Sprite implements IResizeDisplayObject
 	{
@@ -35,6 +36,13 @@ package utils.map
 		public var mapManager:MapManager;
 		public var nav:NavMesh;
 		
+		public var left:int;
+		public var right:int;
+		public var top:int;
+		public var bottom:int;
+		
+		public var hero:Hero;
+		
 		public function MapContainer()
 		{
 			init();
@@ -51,11 +59,13 @@ package utils.map
 			this._recH = stage.stageHeight;
 			_wNum = Math.ceil(_recW/300) + 1;
 			_hNum = Math.ceil(_recH/300) + 1;
+			//this.left = this._recW/2;
+			//this.right = 
 		}
 		
-		public function refrushMap(center:Point):void{
-			var tempx:int =  this._recW/2 - center.x;
-			var tempy:int =  this._recH/2 - center.y;
+		public function refrushMap(centerX:int,centerY:int):void{
+			var tempx:int =  this._recW/2 - centerX;
+			var tempy:int =  this._recH/2 - centerY;
 			if(tempx > 0){
 				tempx = 0;
 			}else if(tempx < this._recW - _mapW){
@@ -79,14 +89,10 @@ package utils.map
 		}
 
 		private function onClick(event:MouseEvent):void{
-			if(_beginPoint){
-				var endPoint:Point = new Point(event.localX - this._mapBitmap.x, event.localY - this._mapBitmap.y);
-				nav.findPath(_beginPoint, endPoint);
-				_beginPoint = null;
-			}else{
-				_beginPoint = new Point(event.localX - this._mapBitmap.x, event.localY - this._mapBitmap.y);
-			}
-				
+			_beginPoint = new Point(hero.baseX,hero.baseY);
+			
+			var endPoint:Point = new Point(event.localX - this._mapBitmap.x, event.localY - this._mapBitmap.y);
+			hero.path = nav.findPath(_beginPoint, endPoint);
 		}
 		
 		public function setMapWH(w:int,h:int):void{
@@ -110,6 +116,31 @@ package utils.map
 		public function get mapBitmap():Bitmap
 		{
 			return _mapBitmap;
+		}
+
+		public function get recW():int
+		{
+			return _recW;
+		}
+
+		public function get recH():int
+		{
+			return _recH;
+		}
+
+		public function get mapW():int
+		{
+			return _mapW;
+		}
+
+		public function get mapH():int
+		{
+			return _mapH;
+		}
+
+		public function set beginPoint(value:Point):void
+		{
+			_beginPoint = value;
 		}
 
 
