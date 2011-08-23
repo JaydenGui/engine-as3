@@ -93,9 +93,11 @@ package org.ijelly.findPath
 			outPath = calculateBlock(outPath);
 			var string:String = "寻路时间："+(getTimer()-stime);
 			Console.getInstance().show(string);
+			
 			//trace(outPath);
 			//画路径线
-			if (outPath != null && outPath.length > 1) {
+			
+			/*if (outPath != null && outPath.length > 1) {
 				if(outPath[0].isIN)
 					this.graphics.lineStyle(2, 0xffff00,0.1);
 				else
@@ -108,7 +110,7 @@ package org.ijelly.findPath
 					else
 						this.graphics.lineStyle(2, 0xffff00,1);
 				}
-			}
+			}*/
 			return outPath;
 		}
 		

@@ -27,7 +27,7 @@ package utils.map
 
 	public class MapManager extends EventDispatcher
 	{
-		private var _baseUrl:String = 'file:///D:/My%20Documents/map/';
+		private var _baseUrl:String = 'file:///C:/Documents%20and%20Settings/Administrator/My%20Documents/map/';
 		/*file:///C:/Documents%20and%20Settings/Administrator/My%20Documents/map/CJ301/CJ301.navmap*/
 		/*file:///D:/My%20Documents/map/CJ301/CJ301.mapedit*/
 		private var _mapName:String = 'CJ301';

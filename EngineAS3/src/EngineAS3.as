@@ -5,6 +5,7 @@ package
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.geom.Point;
+	import flash.text.TextField;
 	
 	import utils.debug.Console;
 	import utils.map.IResizeDisplayObject;

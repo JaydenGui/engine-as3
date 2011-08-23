@@ -129,10 +129,13 @@ package utils.role
 		}
 		public function set dircet(value:int):void
 		{
-			_rolebitmap.dircet = value;
+			//_rolebitmap.dircet = value;
 		}
-		public function move():void{
-			
+		public function startMove(dircet:int):void{
+			_rolebitmap.startMove(dircet);
+		}
+		public function stopMove():void{
+			_rolebitmap.stopMove();
 		}
 		public function go():void{
 			this.baseX += vx;
