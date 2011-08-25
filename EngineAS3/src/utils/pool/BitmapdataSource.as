@@ -35,7 +35,7 @@ package utils.pool
 			var rec:Rectangle = new Rectangle(0,0,120,120);
 			var p:Point = new Point;
 			for(var i:int=0;i<8;i++){
-				for(var j:int=0;j<8;j++){
+				for(var j:int=0;j<12;j++){
 					var smaBitmapdata:BitmapData = new BitmapData(120,120,true,0);
 					rec.x = 120 * i;
 					rec.y = 120 * j;

@@ -173,13 +173,13 @@ package utils.map
 			
 			key = beginX + "_" + beginY;
 			
-			if(_currentPoint != key){
+			/*if(_currentPoint != key){
 				Console.getInstance().show("加载");
 				_currentPoint = key;
 			}else{
 				Console.getInstance().show("空闲");
 				return;
-			}
+			}*/
 			
 			for(var i:int=0;i<wNum;i++){
 				for(var j:int=0;j<hNum;j++){

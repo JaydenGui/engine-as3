@@ -105,16 +105,24 @@ package utils.role
 				startMove(6);
 			else if(angle>310) //右上
 				startMove(5);
-			else if(angle>231)//正上
+			else if(angle>275)
+				startMove(10);
+			else if(angle>265)
 				startMove(4);
+			else if(angle>231)//正上
+				startMove(11);
 			else if(angle>191) //左上
 				startMove(3);
 			else if(angle>168)//正左
 				startMove(2);
 			else if(angle>129)//左下
 				startMove(1);
-			else if(angle>50) //正下
+			else if(angle>95)//左下
+				startMove(8);
+			else if(angle>85) //正下
 				startMove(0);
+			else if(angle>50) //正下
+				startMove(9);
 			else              //右下
 				startMove(7);
 		}

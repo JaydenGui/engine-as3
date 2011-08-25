@@ -134,7 +134,7 @@ package org.ijelly.findPath
 			for(i = 0;i<lineAry.length-1;i++){
 				var ary:Array = new Array;
 				var beginPoint:Vector2f = lineAry[i];
-				var endPoint:Vector2f = lineAry[i+1];
+				var endPoint:* = lineAry[i+1];
 				var l:Line2D = new Line2D(beginPoint,endPoint);
 				//trace("L为" + "(" + beginPoint.x + "," + beginPoint.y + ")>>>(" + endPoint.x + "," + endPoint.y + ")");
 				
@@ -509,10 +509,10 @@ package org.ijelly.findPath
 			var waypathArr:Array = new Array();
 			
 			//开始点
-			pathArr.push(start.toPoint());	
+			pathArr.push(start);	
 			//起点与终点在同一三角形中
 			if (cellPath.length == 1) {		
-				pathArr.push(end.toPoint());	//结束点
+				pathArr.push(end);	//结束点
 				return pathArr;
 			}
 			

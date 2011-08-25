@@ -34,7 +34,7 @@ package
 			mapContainer = new MapContainer;
 			this.addChild(mapContainer);
 			mapManager = new MapManager(stage,mapContainer);
-			mapManager.initMap("CJ301");
+			mapManager.initMap("CJ201");
 			this.addChild(Console.getInstance());
 			mapManager.addEventListener(Event.INIT,onMapInit);
 			//mapContainer.refrushMap(new Point(100,100));
@@ -51,10 +51,10 @@ package
 			obj.image = ConstPool.roleAry[int(16*Math.random())];
 			hero.info = obj;
 			
-			hero.baseX = 740;
-			hero.baseY = 220;
+			hero.baseX = 439;
+			hero.baseY = 440;
 			mapContainer.hero = hero;
-			mapContainer.refrushMap(740,220);
+			mapContainer.refrushMap(hero.baseX,hero.baseY);
 			
 			
 			hero.addTostage(this);
