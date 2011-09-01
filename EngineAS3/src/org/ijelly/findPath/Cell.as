@@ -9,6 +9,7 @@ package org.ijelly.findPath
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	
+	import org.ijelly.geom.PathPoint;
 	import org.ijelly.geom.Triangle;
 	import org.ijelly.geom.Vector2f;
 	
@@ -28,6 +29,8 @@ package org.ijelly.findPath
 		public var isOpen:Boolean = false;
 		public var parent:Cell;
 		public var countPoint:Vector2f;
+		public var pathPointOne:PathPoint;
+		public var pathPointTwo:PathPoint;
 		
 		public var bolckAry:Vector.<int>;
 		

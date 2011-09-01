@@ -1,5 +1,7 @@
 package utils.role
 {
+	import flash.utils.getTimer;
+	
 	import org.ijelly.geom.Vector2f;
 	
 	import utils.map.MapContainer;
@@ -11,6 +13,9 @@ package utils.role
 		private var _currentPoint:Vector2f;
 		private var _targetPoint:Vector2f;
 		private var _flag:int;
+		private var _startTime:int;
+		private var _startX:int;
+		private var _startY:int;
 		public var walk:Boolean;
 		public function Hero(map:MapContainer)
 		{
@@ -41,8 +46,9 @@ package utils.role
 			if(!walk){
 				return;
 			}
-			this.baseX += this.vx;
-			this.baseY += this.vy;
+			var time:int = getTimer();
+			this.baseX = this._startX + (time-this._startTime)*this.vx;
+			this.baseY = this._startY + (time-this._startTime)*this.vy;
 			_map.refrushMap(this.baseX,this.baseY);
 			if(Math.abs(this.baseX-this._targetPoint.x) < 3 && Math.abs(this.baseY-this._targetPoint.y) < 3){
 				if(this._flag == _path.length-1){
@@ -73,8 +79,12 @@ package utils.role
 			var spY:int = _targetPoint.y-_currentPoint.y;
 			var spX:int = _targetPoint.x-_currentPoint.x;
 			var sp:int = Math.sqrt(spX*spX + spY*spY);
-			this.vx = 5*spX/sp;
-			this.vy = 5*spY/sp;
+			this.vx = spX/sp/10;
+			this.vy = spY/sp/10;
+			
+			this._startTime = getTimer();
+			this._startX = this.baseX;
+			this._startY = this.baseY;
 			
 			
 			var cos:Number=spX/sp;
@@ -85,22 +95,6 @@ package utils.role
 			
 			var baseA:int = 15;
 			
-			/*if(angle>360-baseA || angle<baseA) //往右
-				startMove(6);
-			else if(angle>270+baseA) //右上
-				startMove(5);
-			else if(angle>270-baseA)//正上
-				startMove(4);
-			else if(angle>180+baseA) //左上
-				startMove(3);
-			else if(angle>180-baseA)//正左
-				startMove(2);
-			else if(angle>90+baseA)//左下
-				startMove(1);
-			else if(angle>90-baseA) //正下
-				startMove(0);
-			else              //右下
-				startMove(7);*/
 			if(angle>349 || angle<11) //往右
 				startMove(6);
 			else if(angle>310) //右上

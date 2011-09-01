@@ -34,7 +34,7 @@ package
 			mapContainer = new MapContainer;
 			this.addChild(mapContainer);
 			mapManager = new MapManager(stage,mapContainer);
-			mapManager.initMap("CJ201");
+			mapManager.initMap("CJ301");
 			this.addChild(Console.getInstance());
 			mapManager.addEventListener(Event.INIT,onMapInit);
 			//mapContainer.refrushMap(new Point(100,100));

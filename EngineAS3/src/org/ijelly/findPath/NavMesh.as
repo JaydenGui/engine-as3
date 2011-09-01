@@ -4,8 +4,6 @@
 */
 package org.ijelly.findPath
 {
-	import utils.debug.Console;
-	
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.geom.Point;
@@ -15,9 +13,12 @@ package org.ijelly.findPath
 	
 	import org.ijelly.geom.Block;
 	import org.ijelly.geom.Line2D;
+	import org.ijelly.geom.PathPoint;
 	import org.ijelly.geom.PointClassification;
 	import org.ijelly.geom.Vector2f;
 	import org.ijelly.util.Heap;
+	
+	import utils.debug.Console;
 	
 	/**
 	 * NavMesh
@@ -44,7 +45,7 @@ package org.ijelly.findPath
 			m_CellVector = cellVector;
 			g = this.graphics;
 			//
-			openList = new Heap(m_CellVector.length, function(a:Cell, b:Cell):int { return b.f + b.h - a.f - a.h; });
+			openList = new Heap(m_CellVector.length, function(a:PathPoint, b:PathPoint):int { return b.f - a.f;});
 			closeList = new Array();
 		}
 		
@@ -84,7 +85,7 @@ package org.ijelly.findPath
 			var outPath:Array;
 			
 			if (startCell == endCell) {
-				outPath = [startPointPx, endPointPx];
+				outPath = [new Vector2f(startPointPx.x,startPointPx.y), new Vector2f(endPointPx.x,endPointPx.y)];
 			} else {
 				outPath = buildPath(startCell, startPos, endCell, endPos);
 			}
@@ -97,7 +98,7 @@ package org.ijelly.findPath
 			//trace(outPath);
 			//画路径线
 			
-			/*if (outPath != null && outPath.length > 1) {
+			if (outPath != null && outPath.length > 1) {
 				if(outPath[0].isIN)
 					this.graphics.lineStyle(2, 0xffff00,0.1);
 				else
@@ -110,7 +111,7 @@ package org.ijelly.findPath
 					else
 						this.graphics.lineStyle(2, 0xffff00,1);
 				}
-			}*/
+			}
 			return outPath;
 		}
 		
@@ -357,7 +358,9 @@ package org.ijelly.findPath
 			
 			//初始化上次计算估价值的终点为目标点
 			endCell.countPoint = endPos;
-			openList.put(endCell);
+			endCell.pathPointOne = new PathPoint(endPos,0,0,endCell,null);
+			endCell.pathPointTwo = new PathPoint(endPos,0,0,endCell,null);
+			openList.put(endCell.pathPointOne);
 			endCell.f = 0;
 			endCell.h = 0;
 			endCell.isOpen = false;
@@ -369,12 +372,13 @@ package org.ijelly.findPath
 			var adjacentTmp:Cell = null;	//当前节点的邻接三角型
 			
 			while (openList.size > 0) {
-//				trace(openList.size);
+				//				trace(openList.size);
 				// 1. 把当前节点从开放列表删除, 加入到封闭列表
-				currNode = openList.pop();
-				closeList.push(currNode);
-//				trace(openList.size);
-//				trace("*****", currNode);
+				var p:PathPoint = openList.pop()
+				currNode = p.cell;
+				closeList.push(p);
+				//				trace(openList.size);
+				//				trace("*****", currNode);
 				
 				//路径是在同一个三角形内
 				if (currNode == startCell) {
@@ -384,7 +388,7 @@ package org.ijelly.findPath
 				
 				// 2. 对当前节点相邻的每一个节点依次执行以下步骤:
 				//所有邻接三角型
-//				trace(currNode, currNode.index, currNode.links);
+				//				trace(currNode, currNode.index, currNode.links);
 				var adjacentId:int;
 				for (var i:int=0; i<3; i++) {
 					adjacentId = currNode.links[i];
@@ -394,6 +398,7 @@ package org.ijelly.findPath
 						continue;
 					} else {
 						adjacentTmp = m_CellVector[adjacentId];
+						//trace('当前id' + adjacentId)
 					}
 					
 					if (adjacentTmp != null) {
@@ -404,20 +409,21 @@ package org.ijelly.findPath
 							adjacentTmp.parent = currNode;
 							adjacentTmp.isOpen = true;					
 							
-//							adjacentTmp.f = currNode.f + adjacentTmp.m_WallDistance[Math.abs(i - currNode.m_ArrivalWall)];
+							//							adjacentTmp.f = currNode.f + adjacentTmp.m_WallDistance[Math.abs(i - currNode.m_ArrivalWall)];
 							
+							getPathPoint(currNode,adjacentTmp,startPos);
 							//修改估价函数为起始点到顶点间最小的函数		
-							adjacentTmp.f = currNode.f + contFValue(currNode.countPoint,adjacentTmp);
+							//			adjacentTmp.f = currNode.f + contFValue(currNode.countPoint,adjacentTmp);
 							
 							//H和F值
-//							adjacentTmp.computeH(startPos);
-							adjacentTmp.computeH(startPos,adjacentTmp.countPoint);
+							//			adjacentTmp.computeH(startPos,adjacentTmp.countPoint);
 							
 							
 							//g.moveTo(currNode.countPoint.x,currNode.countPoint.y);
 							//g.lineTo(adjacentTmp.countPoint.x,adjacentTmp.countPoint.y);
 							//放入开放列表并排序
-							openList.put(adjacentTmp);
+							openList.put(adjacentTmp.pathPointOne);
+							openList.put(adjacentTmp.pathPointTwo);
 							
 							// remember the side this caller is entering from
 							adjacentTmp.setAndGetArrivalWall(currNode.index);
@@ -426,24 +432,36 @@ package org.ijelly.findPath
 							//    则判断若经由当前节点到达该相邻节点的G值是否小于原来保存的G值,
 							//    若小于,则将该相邻节点的父节点设为当前节点,并重新设置该相邻节点的G和F值
 							if (adjacentTmp.isOpen) {//已经在openList中
-//							currNode.f + adjacentTmp.m_WallDistance[Math.abs(i - currNode.m_ArrivalWall)]
-
-//								var curTmp = Cell(this.clone(adjacentTmp));
-								var back:Vector2f = null;
+								//							currNode.f + adjacentTmp.m_WallDistance[Math.abs(i - currNode.m_ArrivalWall)]
+								
+								//								var curTmp = Cell(this.clone(adjacentTmp));
+								/*var back:Vector2f = null;
 								
 								var result:int = contFValue1(currNode.countPoint,adjacentTmp,back);
 								
 								var curH = adjacentTmp.computeH(startPos,back);
 								
 								if (currNode.f +result+curH < adjacentTmp.f+adjacentTmp.h) {
-									adjacentTmp.f = currNode.f;
-									
-									adjacentTmp.h = curH;
-									adjacentTmp.parent = currNode;
-									
-									// remember the side this caller is entering from
-									adjacentTmp.setAndGetArrivalWall(currNode.index);
-								}
+								adjacentTmp.f = currNode.f;
+								
+								adjacentTmp.h = curH;
+								adjacentTmp.parent = currNode;
+								
+								adjacentTmp.setAndGetArrivalWall(currNode.index);
+								}*/
+								var result1:PathPoint = setMinPoint(currNode.pathPointOne,adjacentTmp,startPos,1,true);
+								var result2:PathPoint = setMinPoint(currNode.pathPointTwo,adjacentTmp,startPos,2,true);
+								
+								var r3:PathPoint = adjacentTmp.pathPointOne;
+								var r4:PathPoint = adjacentTmp.pathPointTwo;
+								var ary:Array = [result1,result2,r3,r4];
+								//ary.push();
+								ary.sortOn("f",Array.NUMERIC);
+								
+								adjacentTmp.pathPointOne = ary[0];
+								adjacentTmp.pathPointTwo = ary[1];
+								
+								
 							} else {//已在closeList中
 								adjacentTmp = null;
 								continue;
@@ -455,13 +473,87 @@ package org.ijelly.findPath
 			
 			//由网格路径生成Point数组路径
 			if (foundPath) {
-//				trace(closeList);
+				//				trace(closeList);
 				return getPath(startPos, endPos);
 			} else {
 				return null;
 			}
 		}
-		
+		public function getPathPoint(currNode:Cell,adjacentTmp:Cell,startPos:Vector2f):void{
+			var first:Vector2f;
+			var second:Vector2f;
+			if(currNode.countPoint){
+				for(var i:int=0;i<3;i++){
+					for(var j:int=0;j<3;j++){
+						if(currNode.getVertex(i).equal(adjacentTmp.getVertex(j))){
+							if(first){
+								second = adjacentTmp.getVertex(j);
+								break;
+							}else{
+								first = adjacentTmp.getVertex(j);
+							}
+						}
+					}
+				}
+				
+				adjacentTmp.pathPointOne = new PathPoint(first,getDis(first,currNode.countPoint),
+					getDis(first,startPos),adjacentTmp,currNode.pathPointOne);
+				adjacentTmp.pathPointTwo = new PathPoint(second,getDis(second,currNode.countPoint),
+					getDis(second,startPos),adjacentTmp,currNode.pathPointTwo);
+				
+			}else{
+				setMinPoint(currNode.pathPointOne,adjacentTmp,startPos,1);
+				setMinPoint(currNode.pathPointTwo,adjacentTmp,startPos,2);
+			}
+			
+			
+		}
+		public function setMinPoint(currPoint:PathPoint,adjacentTmp:Cell,startPos:Vector2f,flag:int,compare:Boolean=false):PathPoint{
+			var p:Vector2f = currPoint.p;
+			
+			var result:int = 0;
+			var resultpaht:PathPoint;
+			
+			var aF:int = countFValue(p,adjacentTmp.pointA);
+			var bF:int = countFValue(p,adjacentTmp.pointB);
+			var cF:int = countFValue(p,adjacentTmp.pointC);
+			
+			
+			if(aF>bF){
+				if(bF > cF){
+					//c
+					resultpaht = new PathPoint(adjacentTmp.pointC,currPoint.g + cF,
+						getDis(adjacentTmp.pointC,startPos),adjacentTmp,currPoint);
+				}else{
+					//b
+					resultpaht = new PathPoint(adjacentTmp.pointB,currPoint.g + bF,
+						getDis(adjacentTmp.pointB,startPos),adjacentTmp,currPoint);
+				}
+			}else {
+				if(aF > cF){
+					//c
+					resultpaht = new PathPoint(adjacentTmp.pointC,currPoint.g + cF,
+						getDis(adjacentTmp.pointC,startPos),adjacentTmp,currPoint);
+				}else{
+					//a
+					resultpaht = new PathPoint(adjacentTmp.pointA,currPoint.g + aF,
+						getDis(adjacentTmp.pointA,startPos),adjacentTmp,currPoint);
+				}
+			}
+			if(!compare){
+				if(flag == 1){
+					adjacentTmp.pathPointOne = resultpaht;
+				}else if(flag == 2){
+					adjacentTmp.pathPointTwo = resultpaht;
+				}
+			}
+			return resultpaht;
+		}
+		private function getDis(f:*,s:*):Number{
+			var xx:Number = f.x-s.x;
+			var yy:Number = f.y-s.y;
+			return Math.sqrt(xx*xx+yy*yy);
+		}
 		/**
 		 * 路径经过的网格
 		 * @return 
@@ -469,24 +561,26 @@ package org.ijelly.findPath
 		private function getCellPath():Vector.<Cell> {
 			var pth:Vector.<Cell> = new Vector.<Cell>();
 			
-			var st:Cell = closeList[closeList.length-1];
+			var p:PathPoint = closeList[closeList.length-1]
+			var st:Cell = p.cell;
 			pth.push(st);
-						
-			while (st.parent != null) {
-//				trace("&&&&&", st.parent);
+			
+			while (p.parent != null) {
+				//				trace("&&&&&", st.parent);
+				
 				/*this.graphics.beginFill(0x0000ff, 0.2);
-				st.draw(this.graphics);
+				p.cell.draw(this.graphics);
 				this.graphics.endFill();*/
 				
-				pth.push(st.parent);
-				st = st.parent;
+				pth.push(p.parent.cell);
+				p = p.parent;
 			}
 			
 			/*this.graphics.beginFill(0x0000ff, 0.2);
 			st.draw(this.graphics);
-			this.graphics.endFill();*/
+			this.graphics.endFill();
 			
-			//trace(pth);
+			trace(pth);*/
 			return pth;
 		}
 		

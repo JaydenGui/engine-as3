@@ -161,7 +161,6 @@ package utils.role
 		{
 			_baseY = value;
 		}
-		
 
 	}
 }
