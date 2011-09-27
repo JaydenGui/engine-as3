@@ -1,5 +1,6 @@
 package utils.map
 {
+	import org.blch.geom.Circle;
 	import org.ijelly.TilePath;
 	import org.ijelly.findPath.Cell;
 	import org.ijelly.findPath.NavMesh;
@@ -33,6 +34,7 @@ package utils.map
 			var pAry:Array;
 			var _cellV:Vector.<Cell> = new Vector.<Cell>();
 			var _blockV:Vector.<Block> = new Vector.<Block>;
+			var _crossBlockV:Vector.<Circle> = new Vector.<Circle>;
 			
 			for(var i:int=0;i<ary.length;i++){
 				str = ary[i];
@@ -87,9 +89,13 @@ package utils.map
 			for(i=0;i<ary.length;i++){
 				str = ary[i];
 				pAry = str.split(',');
-				
+				var circle:Circle = new Circle(pAry[0],pAry[1],pAry[2]);
+				_crossBlockV.push(circle);
 			}
 			
+			nav = new NavMesh(_cellV);
+			nav.blockV = _blockV;
+			nav.crossBlockV = _crossBlockV;
 			//_mapContainer.setNav(_cellV,_blockV);
 			
 			
