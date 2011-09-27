@@ -92,8 +92,8 @@ package utils.map
 				cell = new Cell(new Vector2f(pAry[0],pAry[1]),new Vector2f(pAry[2],pAry[3]),new Vector2f(pAry[4],pAry[5]));
 				cell.index = i;
 				for(var j:int=6;j<pAry.length;j++){
-					cell.bolckAry = new Vector.<int>;
-					cell.bolckAry.push(pAry[j]);
+					cell.blockAry = new Vector.<int>;
+					cell.blockAry.push(pAry[j]);
 				}
 				_cellV.push(cell);
 			}

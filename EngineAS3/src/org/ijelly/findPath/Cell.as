@@ -32,7 +32,8 @@ package org.ijelly.findPath
 		public var pathPointOne:PathPoint;
 		public var pathPointTwo:PathPoint;
 		
-		public var bolckAry:Vector.<int>;
+		public var blockAry:Vector.<int>;
+		public var crossBlockAry:Vector.<int>;
 		
 		public var m_ArrivalWall:int; // the side we arrived through.
 		public var m_WallMidpoint:Vector.<Vector2f>; // 每个边的中点

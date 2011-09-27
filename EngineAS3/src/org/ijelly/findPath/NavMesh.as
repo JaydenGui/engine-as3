@@ -120,9 +120,9 @@ package org.ijelly.findPath
 			var cell:Cell;
 			var next:Boolean;
 			for(var i:int=0;i<cellPath.length;i++){
-				if(cellPath[i].bolckAry){
-					for(var j:int=0;j<cellPath[i].bolckAry.length;j++){
-						calculateBlock[cellPath[i].bolckAry[j]] = blockV[cellPath[i].bolckAry[j]];
+				if(cellPath[i].blockAry){
+					for(var j:int=0;j<cellPath[i].blockAry.length;j++){
+						calculateBlock[cellPath[i].blockAry[j]] = blockV[cellPath[i].blockAry[j]];
 						next = true;
 					}
 				}

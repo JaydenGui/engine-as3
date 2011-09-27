@@ -12,6 +12,7 @@ package
 	import utils.map.MapContainer;
 	import utils.map.MapLoaderInterface;
 	import utils.map.MapManager;
+	import utils.map.PathServer;
 	import utils.pool.ConstPool;
 	import utils.role.Hero;
 	
@@ -38,6 +39,7 @@ package
 			this.addChild(Console.getInstance());
 			mapManager.addEventListener(Event.INIT,onMapInit);
 			//mapContainer.refrushMap(new Point(100,100));
+			var pathserver:PathServer;
 		}
 		private function onMapInit(event:Event):void{
 			//mapContainer.refrushMap(new Point(500,500));
