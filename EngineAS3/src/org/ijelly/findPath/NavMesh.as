@@ -11,6 +11,7 @@ package org.ijelly.findPath
 	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
 	
+	import org.blch.geom.Circle;
 	import org.ijelly.geom.Block;
 	import org.ijelly.geom.Line2D;
 	import org.ijelly.geom.PathPoint;
@@ -39,7 +40,9 @@ package org.ijelly.findPath
 		private var closeList:Array;
 		public var g:Graphics;
 		private var cellPath:Vector.<Cell>;
-		public var blockV:Vector.<Block> = new Vector.<Block>;
+		public var blockV:Vector.<Block>;
+		public var crossBlockV:Vector.<Circle>;
+		
 		public function NavMesh(cellVector:Vector.<Cell>)
 		{
 			m_CellVector = cellVector;
