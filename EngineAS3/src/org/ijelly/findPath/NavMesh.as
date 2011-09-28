@@ -11,8 +11,8 @@ package org.ijelly.findPath
 	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
 	
-	import org.blch.geom.Circle;
 	import org.ijelly.geom.Block;
+	import org.ijelly.geom.Circle;
 	import org.ijelly.geom.Line2D;
 	import org.ijelly.geom.PathPoint;
 	import org.ijelly.geom.PointClassification;
@@ -42,6 +42,7 @@ package org.ijelly.findPath
 		private var cellPath:Vector.<Cell>;
 		public var blockV:Vector.<Block>;
 		public var crossBlockV:Vector.<Circle>;
+		//public var lineCrossBlock:LineCrossBlock;
 		
 		public function NavMesh(cellVector:Vector.<Cell>)
 		{
@@ -95,6 +96,9 @@ package org.ijelly.findPath
 			outPath[0] = new Vector2f(outPath[0].x,outPath[0].y);
 			//trace();
 			outPath = calculateBlock(outPath);
+			
+			//outPath = lineCrossBlock.processLine(outPath);
+			
 			var string:String = "寻路时间："+(getTimer()-stime);
 			Console.getInstance().show(string);
 			
@@ -115,6 +119,9 @@ package org.ijelly.findPath
 						this.graphics.lineStyle(2, 0xffff00,1);
 				}
 			}
+			
+			
+			
 			return outPath;
 		}
 		

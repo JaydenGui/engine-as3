@@ -1,10 +1,12 @@
 package utils.map
 {
-	import org.blch.geom.Circle;
+	import flash.geom.Point;
+	
 	import org.ijelly.TilePath;
 	import org.ijelly.findPath.Cell;
 	import org.ijelly.findPath.NavMesh;
 	import org.ijelly.geom.Block;
+	import org.ijelly.geom.Circle;
 	import org.ijelly.geom.Vector2f;
 
 	public class PathServer
@@ -97,7 +99,7 @@ package utils.map
 			nav.blockV = _blockV;
 			nav.crossBlockV = _crossBlockV;
 			//_mapContainer.setNav(_cellV,_blockV);
-			
+			nav.findPath(new Point,new Point);
 			
 		}
 		public function linkCells(pv:Vector.<Cell>):void {
