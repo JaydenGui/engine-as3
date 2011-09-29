@@ -7,20 +7,24 @@ package utils.map
 	import org.ijelly.findPath.NavMesh;
 	import org.ijelly.geom.Block;
 	import org.ijelly.geom.Circle;
+	import org.ijelly.geom.Polygon;
+	import org.ijelly.geom.PolygonCircle;
 	import org.ijelly.geom.Vector2f;
 
 	public class PathServer
 	{
 		private var nav:NavMesh;
 		private var tile:TilePath;
+		private var type:String;
 		public function PathServer()
 		{
 			
 		}
 		public function initMapdata(xml:XML):void{
-			var type:String = xml.@type;
+			type = xml.@type;
 			if(type == "nav"){
 				//nav = new NavMesh();
+				processNav(xml);
 			}else if(type == "tile"){
 				
 			}
@@ -36,7 +40,7 @@ package utils.map
 			var pAry:Array;
 			var _cellV:Vector.<Cell> = new Vector.<Cell>();
 			var _blockV:Vector.<Block> = new Vector.<Block>;
-			var _crossBlockV:Vector.<Circle> = new Vector.<Circle>;
+			var _crossBlockV:Vector.<PolygonCircle> = new Vector.<PolygonCircle>;
 			
 			for(var i:int=0;i<ary.length;i++){
 				str = ary[i];
@@ -90,16 +94,33 @@ package utils.map
 			
 			for(i=0;i<ary.length;i++){
 				str = ary[i];
+				var pcary:Array = str.split(">");
+				str = pcary[0];
+				
+				pAry = str.split('|');
+				vAry = new Vector.<Vector2f>;
+				for(j=0;j<pAry.length;j++){
+					str = pAry[j];
+					bAry = str.split(",");
+					v2f = new Vector2f(bAry[0],bAry[1]);
+					vAry.push(v2f);
+				}
+				str = pcary[1];
 				pAry = str.split(',');
 				var circle:Circle = new Circle(pAry[0],pAry[1],pAry[2]);
-				_crossBlockV.push(circle);
+				
+				var polyCircle:PolygonCircle = new PolygonCircle(vAry,circle);
+				_crossBlockV.push(polyCircle);
+				
 			}
 			
 			nav = new NavMesh(_cellV);
 			nav.blockV = _blockV;
 			nav.crossBlockV = _crossBlockV;
+			
+			
 			//_mapContainer.setNav(_cellV,_blockV);
-			nav.findPath(new Point,new Point);
+			//nav.findPath(new Point,new Point);
 			
 		}
 		public function linkCells(pv:Vector.<Cell>):void {
@@ -113,6 +134,14 @@ package utils.map
 		}
 		private function processTile():void{
 			
+		}
+		private function findPath(beginP:Point,endP:Point):Array{
+			if(type == "nav"){
+				return nav.findPath(beginP,endP);
+			}else if(type == "tile"){
+				return tile.aPath;
+			}
+			return null;
 		}
 	}
 }

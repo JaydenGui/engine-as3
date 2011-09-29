@@ -49,11 +49,14 @@ package utils.map
 		private var _cellV:Vector.<Cell> = new Vector.<Cell>();
 		private var _blockV:Vector.<Block> = new Vector.<Block>;
 		
+		private var _pathServer:PathServer;
+		
 		public function MapManager(stage:Stage,mapContainer:MapContainer)
 		{
 			this.stage = stage;
 			this._mapContainer = mapContainer;
 			this._mapContainer.mapManager = this;
+			_pathServer = new PathServer;
 		}
 		public function initMap(mapName:String):void{
 			this._mapName = mapName;
@@ -78,7 +81,8 @@ package utils.map
 			this._mapHeight = xml.@mapheight;
 			this._pich = xml.@pich;
 			this._picw = xml.@picw;
-			initMapData(xml.@mapdata,xml.@blockdata);
+			_pathServer.initMapdata(xml);
+			//initMapData(xml.@mapdata,xml.@blockdata);
 		}
 		
 		private function initMapData(trgData:String,blockData:String):void{
