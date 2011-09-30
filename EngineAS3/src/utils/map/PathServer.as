@@ -135,7 +135,7 @@ package utils.map
 		private function processTile():void{
 			
 		}
-		private function findPath(beginP:Point,endP:Point):Array{
+		public function findPath(beginP:Point,endP:Point):Array{
 			if(type == "nav"){
 				return nav.findPath(beginP,endP);
 			}else if(type == "tile"){

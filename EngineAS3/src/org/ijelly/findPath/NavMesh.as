@@ -52,6 +52,7 @@ package org.ijelly.findPath
 			//
 			openList = new Heap(m_CellVector.length, function(a:PathPoint, b:PathPoint):int { return b.f - a.f;});
 			closeList = new Array();
+			lineCrossBlock = new LineCrossBlock();
 		}
 		
 		public function getCell(index:int):Cell {
@@ -125,7 +126,17 @@ package org.ijelly.findPath
 			
 			return outPath;
 		}
-		
+		private function getCrossBlock():void{
+			for(var i:int=0;i<cellPath.length;i++){
+				if(cellPath[i].crossBlockAry){
+					for(var j:int=0;j<cellPath[i].blockAry.length;j++){
+						calculateBlock[cellPath[i].blockAry[j]] = blockV[cellPath[i].blockAry[j]];
+						
+						//next = true;
+					}
+				}
+			}
+		}
 		private function calculateBlock(lineAry:Array):Array{
 			var calculateBlock:Object = new Object;
 			var cell:Cell;

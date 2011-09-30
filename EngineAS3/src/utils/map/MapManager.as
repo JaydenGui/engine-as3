@@ -27,7 +27,7 @@ package utils.map
 
 	public class MapManager extends EventDispatcher
 	{
-		private var _baseUrl:String = 'file:///D:/My%20Documents/map/';
+		private var _baseUrl:String = 'file:///C:/Documents%20and%20Settings/Administrator/My%20Documents/map/';
 		/*file:///C:/Documents%20and%20Settings/Administrator/My%20Documents/map/CJ301/CJ301.navmap*/
 		/*file:///D:/My%20Documents/map/CJ301/CJ301.mapedit*/
 		private var _mapName:String = 'CJ301';
@@ -49,20 +49,20 @@ package utils.map
 		private var _cellV:Vector.<Cell> = new Vector.<Cell>();
 		private var _blockV:Vector.<Block> = new Vector.<Block>;
 		
-		private var _pathServer:PathServer;
+		public var pathServer:PathServer;
 		
 		public function MapManager(stage:Stage,mapContainer:MapContainer)
 		{
 			this.stage = stage;
 			this._mapContainer = mapContainer;
 			this._mapContainer.mapManager = this;
-			_pathServer = new PathServer;
+			pathServer = new PathServer;
 		}
 		public function initMap(mapName:String):void{
 			this._mapName = mapName;
 			
 			var loadList:Vector.<LoadInfo> = new Vector.<LoadInfo>;
-			var mapdataUrl:String = _baseUrl + _mapName + "/" + _mapName + ".navmap";
+			var mapdataUrl:String = _baseUrl + _mapName + "/" + _mapName + ".navtile";
 			var loadInfo:LoadInfo = new LoadInfo(mapdataUrl,LoadInfo.XML,onLoadmapData,true);
 			loadList.push(loadInfo);
 			
@@ -81,7 +81,7 @@ package utils.map
 			this._mapHeight = xml.@mapheight;
 			this._pich = xml.@pich;
 			this._picw = xml.@picw;
-			_pathServer.initMapdata(xml);
+			pathServer.initMapdata(xml);
 			//initMapData(xml.@mapdata,xml.@blockdata);
 		}
 		
@@ -117,7 +117,7 @@ package utils.map
 				}
 				_blockV.push(new Block(vAry));
 			}
-			_mapContainer.setNav(_cellV,_blockV);
+			//_mapContainer.setNav(_cellV,_blockV);
 		}
 		public function linkCells(pv:Vector.<Cell>):void {
 			for each (var pCellA:Cell in pv) {

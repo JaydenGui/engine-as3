@@ -34,7 +34,9 @@ package utils.map
 		private var _beginPoint:Point;
 		
 		public var mapManager:MapManager;
-		public var nav:NavMesh;
+		
+		
+		//public var nav:NavMesh;
 		
 		public var left:int;
 		public var right:int;
@@ -78,8 +80,10 @@ package utils.map
 				tempy = this._recH - _mapH;
 			}
 			
-			this._mapBitmap.x =  nav.x = tempx;
-			this._mapBitmap.y = nav.y = tempy;
+			//this._mapBitmap.x =  nav.x = tempx;
+			//this._mapBitmap.y = nav.y = tempy;
+			this._mapBitmap.x = tempx;
+			this._mapBitmap.y = tempy;
 			mapManager.onLoadkey(-tempx,-tempy,this._wNum,this._hNum);
 		}
 		
@@ -92,7 +96,9 @@ package utils.map
 			_beginPoint = new Point(hero.baseX,hero.baseY);
 			
 			var endPoint:Point = new Point(event.localX - this._mapBitmap.x, event.localY - this._mapBitmap.y);
-			hero.path = nav.findPath(_beginPoint, endPoint);
+			
+			//hero.path = nav.findPath(_beginPoint, endPoint);
+			hero.path = mapManager.pathServer.findPath(_beginPoint, endPoint);
 		}
 		
 		public function setMapWH(w:int,h:int):void{
@@ -107,11 +113,11 @@ package utils.map
 			this.addChildAt(_mapBitmap,0);
 		}
 		
-		public function setNav(cellv:Vector.<Cell>,blockV:Vector.<Block>):void{
+		/*public function setNav(cellv:Vector.<Cell>,blockV:Vector.<Block>):void{
 			nav = new NavMesh(cellv);
 			nav.blockV = blockV;
 			this.addChild(nav);
-		}
+		}*/
 		
 		public function get mapBitmap():Bitmap
 		{
