@@ -7,9 +7,10 @@ package
 	import flash.geom.Point;
 	import flash.text.TextField;
 	
+	import utils.GameServer;
 	import utils.debug.Console;
-	import utils.map.IResizeDisplayObject;
 	import utils.map.MapContainer;
+	import utils.map.IResizeDisplayObject;
 	import utils.map.MapLoaderInterface;
 	import utils.map.MapManager;
 	import utils.map.PathServer;
@@ -18,9 +19,13 @@ package
 	
 	public class EngineAS3 extends Sprite
 	{
-		private var mapManager:MapManager;
+		private var mapServer:MapManager;
 		private var mapContainer:MapContainer;
+		private var debugContainer:Sprite;
 		private var hero:Hero;
+		
+		private var gameServer:GameServer 
+		
 		public function EngineAS3()
 		{
 			this.addEventListener(Event.ADDED_TO_STAGE,addToStage);
@@ -29,21 +34,31 @@ package
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
 			stage.addEventListener(Event.RESIZE,onStageResize);
-			initMap();
+			gameServer = new GameServer(stage);
+			gameServer.start();
+			gameServer.gotoScence("CJ201");
+			
+			stage.addChild(Console.getInstance());
+			//initMap();
 		}
 		private function initMap():void{
 			mapContainer = new MapContainer;
 			this.addChild(mapContainer);
-			mapManager = new MapManager(stage,mapContainer);
-			mapManager.initMap("CJ301");
+			debugContainer = new Sprite;
+			this.addChild(debugContainer);
+			debugContainer.mouseEnabled = false;
+			debugContainer.mouseChildren = false;
+			mapContainer.debug = debugContainer;
+			
+			mapServer = new MapManager(stage,mapContainer);
+			mapServer.initMap("CJ301");
 			this.addChild(Console.getInstance());
-			mapManager.addEventListener(Event.INIT,onMapInit);
-			//mapContainer.refrushMap(new Point(100,100));
-			var pathserver:PathServer;
+			mapServer.addEventListener(Event.INIT,onMapInit);
+			
 		}
 		private function onMapInit(event:Event):void{
-			//mapContainer.refrushMap(new Point(500,500));
-			hero = new Hero(mapContainer);
+			
+			hero = new Hero();
 			hero.vx = 3;
 			hero.vy = 3;
 			
@@ -63,17 +78,17 @@ package
 			this.addEventListener(Event.ENTER_FRAME,render);
 		}
 		private function onStageResize(event:Event):void{
-			for(var i:int;i<this.numChildren;i++){
-				var obj:Object = this.getChildAt(i);
+			for(var i:int;i<stage.numChildren;i++){
+				var obj:Object = stage.getChildAt(i);
 				if(obj is IResizeDisplayObject){
 					obj.resize(); 
 				}
 			}
+			gameServer.resize();
 		}
 		private function render(event:Event):void{
 			hero.render();
 			hero.go();
-			//mapContainer.refrushMap(new Point(hero.x,hero.y));
 		}
 	}
 }
