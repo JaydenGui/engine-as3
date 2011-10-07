@@ -1,14 +1,12 @@
 package utils.role
 {
+	import flash.geom.Point;
 	import flash.utils.getTimer;
 	
 	import org.ijelly.geom.Vector2f;
 	
-	import utils.map.MapContainer;
-
 	public class Hero extends Role
 	{
-		private var _map:MapContainer;
 		private var _path:Array;
 		private var _currentPoint:Vector2f;
 		private var _targetPoint:Vector2f;
@@ -17,29 +15,36 @@ package utils.role
 		private var _startX:int;
 		private var _startY:int;
 		public var walk:Boolean;
-		public function Hero(map:MapContainer)
+		
+		private var _mapW:int;
+		private var _mapH:int;
+		private var _recW:int;
+		private var _recH:int;
+		
+		public var server:RoleServer;
+		
+		public function Hero()
 		{
-			this._map = map;	
 		}
 		
 		override public function set baseX(value:Number):void{
 			super.baseX = value;
-			if(value < _map.recW/2){
+			if(value < _recW/2){
 				this.x = value;
-			}else if(value > _map.mapW - _map.recW/2){
-				this.x = value - _map.mapW + _map.recW;
+			}else if(value > _mapW - _recW/2){
+				this.x = value - _mapW + _recW;
 			}else{
-				this.x = _map.recW/2;
+				this.x = _recW/2;
 			}
 		}
 		override public function set baseY(value:Number):void{
 			super.baseY = value;
-			if(value < _map.recH/2){
+			if(value < _recH/2){
 				this.y = value;
-			}else if(value > _map.mapH - _map.recH/2){
-				this.y = value - _map.mapH + _map.recH;
+			}else if(value > _mapH - _recH/2){
+				this.y = value - _mapH + _recH;
 			}else{
-				this.y = _map.recH/2;
+				this.y = _recH/2;
 			}
 		}
 		override public function go():void{
@@ -49,8 +54,10 @@ package utils.role
 			var time:int = getTimer();
 			this.baseX = this._startX + (time-this._startTime)*this.vx;
 			this.baseY = this._startY + (time-this._startTime)*this.vy;
-			_map.refrushMap(this.baseX,this.baseY);
-			if(Math.abs(this.baseX-this._targetPoint.x) < 3 && Math.abs(this.baseY-this._targetPoint.y) < 3){
+			/**add*/
+			//_map.refrushMap(this.baseX,this.baseY);
+			server.dispatchCenter(new Point(this.baseX,this.baseY));
+			if(Math.abs(this.baseX-this._targetPoint.x) < 10 && Math.abs(this.baseY-this._targetPoint.y) < 10){
 				if(this._flag == _path.length-1){
 					stopMove();
 					walk = false;
@@ -65,7 +72,7 @@ package utils.role
 
 		public function set path(value:Array):void
 		{
-			if(value == null){
+			if(value == null || value.length == 0){
 				return;
 			}
 			_path = value;
