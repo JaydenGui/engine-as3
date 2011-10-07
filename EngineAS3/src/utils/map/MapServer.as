@@ -4,6 +4,7 @@ package utils.map
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.display.Stage;
+	import flash.events.DataEvent;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.TimerEvent;
@@ -22,17 +23,38 @@ package utils.map
 	import org.osmf.events.TimeEvent;
 	
 	import utils.debug.Console;
+	import utils.event.LoadKeyEvent;
+	import utils.event.MapdataEvent;
+	import utils.event.RefreshBitmapEvent;
+	import utils.event.ShowLoadingEvent;
 	import utils.load.LoadInfo;
 	import utils.load.LoadManager;
+	
+	
+ /**
+ * 派发图片加载好的事件，分为两种类型，部分加载图块，和小的马赛克图片
+ * */
+[Event(name="refreshbitmapevent", type="utils.event.RefreshBitmapEvent")]
 
-	public class MapManager extends EventDispatcher
+ /**
+ * 派发显示和隐藏loading事件
+ * */
+[Event(name="showloadingevent", type="utils.event.ShowLoadingEvent")]
+
+ /**
+ * 派发地图信息加载完成事件
+ * */
+[Event(name="mapdataevent", type="utils.event.MapdataEvent")]
+
+
+
+	public class MapServer extends EventDispatcher
 	{
 		private var _baseUrl:String = 'file:///D:/My%20Documents/map/';
 		/*file:///C:/Documents%20and%20Settings/Administrator/My%20Documents/map/CJ301/CJ301.navmap*/
 		/*file:///D:/My%20Documents/map/CJ301/CJ301.mapedit*/
 		private var _mapName:String = 'CJ301';
-		private var stage:Stage;
-		private var _mapContainer:MapContainer;
+
 		private var _mapdataDIC:Object;
 		
 		private var _loadListDIC:Object;
@@ -46,15 +68,12 @@ package utils.map
 		private var _allNum:int;
 		private var _currentPoint:String;
 		
-		public var pathServer:PathServer;
+		private var _mapdata:XML;
 		
-		public function MapManager(stage:Stage,mapContainer:MapContainer)
+		
+		public function MapServer()
 		{
-			this.stage = stage;
-			this._mapContainer = mapContainer;
-			this._mapContainer.mapManager = this;
-			pathServer = new PathServer;
-			pathServer.debug = mapContainer.debug;
+			
 		}
 		public function initMap(mapName:String):void{
 			this._mapName = mapName;
@@ -68,7 +87,10 @@ package utils.map
 			loadInfo = new LoadInfo(miniMapUrl,LoadInfo.BITMAP,onLoadMiniMap,true);
 			loadList.push(loadInfo);
 			
-			stage.addChild(MapLoaderInterface.getInstance());
+			var event:ShowLoadingEvent = new ShowLoadingEvent(ShowLoadingEvent.SHOWLOADINGEVENT);
+			event.showable = true;
+			this.dispatchEvent(event);
+			
 			LoadManager.getInstance().addListLoad(loadList,onMapLoaded);
 			
 			_mapdataDIC = new Object;
@@ -79,18 +101,25 @@ package utils.map
 			this._mapHeight = xml.@mapheight;
 			this._pich = xml.@pich;
 			this._picw = xml.@picw;
-			pathServer.initMapdata(xml);
+			_mapdata = xml;
 		}
 		
 		private function onLoadMiniMap(bitmap:Bitmap):void{
-			_mapContainer.mapBitmap = bitmap;
+			var event:RefreshBitmapEvent = new RefreshBitmapEvent(RefreshBitmapEvent.REFRESHBITMAPEVENT);
+			event.bitmap = bitmap;
+			event.bitmaptype = "all";
+			this.dispatchEvent(event);
 		}
 		
 		private function onMapLoaded(event:Event):void{
-			stage.removeChild(MapLoaderInterface.getInstance());
-			_mapContainer.setMapWH(this._mapWidth,this._mapHeight);
+			var events:ShowLoadingEvent = new ShowLoadingEvent(ShowLoadingEvent.SHOWLOADINGEVENT);
+			events.showable = false;
+			this.dispatchEvent(events);
 			initListDIC();
-			this.dispatchEvent(new Event(Event.INIT));
+			
+			var mapdataEvent:MapdataEvent = new MapdataEvent(MapdataEvent.MAPDATAEVENT);
+			mapdataEvent.xml = _mapdata
+			this.dispatchEvent(mapdataEvent);
 		}
 		private function initListDIC():void{
 			if(_loadListDIC == null)
@@ -117,14 +146,20 @@ package utils.map
 				}
 			}
 		}
-		public function onLoadkey(xpos:Number,ypos:Number,wNum:int,hNum:int):void{
+		public function onLoadkey(event:LoadKeyEvent):void{
 			if(_loadNum >= _allNum){
 				//Console.getInstance().show("加载全部完成");
 				return;
 			}
+			
+			/*var xpos:int = event.xpos;
+			,ypos:Number
+			,wNum:int
+			,hNum:int*/
+			
 			var key:String;
-			var beginX:int = xpos/300;
-			var beginY:int = ypos/300;
+			var beginX:int = event.xpos/300;
+			var beginY:int = event.ypos/300;
 			
 			key = beginX + "_" + beginY;
 			
@@ -136,8 +171,8 @@ package utils.map
 				return;
 			}*/
 			
-			for(var i:int=0;i<wNum;i++){
-				for(var j:int=0;j<hNum;j++){
+			for(var i:int=0;i<event.wNum;i++){
+				for(var j:int=0;j<event.hNum;j++){
 					key = (i+beginX) + "_" + (j+beginY);
 					if(!_loadListDIC.hasOwnProperty(key) || _loadListDIC[key]){
 						continue;
@@ -156,11 +191,16 @@ package utils.map
 		}
 		
 		private function refreshBitmap(bitmap:Bitmap,p:Point):void{
-			var bitmapdata:BitmapData = _mapContainer.mapBitmap.bitmapData;
+			var event:RefreshBitmapEvent = new RefreshBitmapEvent(RefreshBitmapEvent.REFRESHBITMAPEVENT);
+			event.bitmap = bitmap;
+			event.p = p;
+			event.bitmaptype = "part";
+			this.dispatchEvent(event);
+			/*var bitmapdata:BitmapData = _mapContainer.mapBitmap.bitmapData;
 			var newbitmapdata:BitmapData = bitmap.bitmapData;
 			var rec:Rectangle = new Rectangle(0,0,300,300);
 			var newp:Point = new Point(p.x * 300,p.y * 300);
-			bitmapdata.copyPixels(newbitmapdata,rec,newp);
+			bitmapdata.copyPixels(newbitmapdata,rec,newp);*/
 		}
 		
 	}
