@@ -97,9 +97,11 @@ package org.ijelly.findPath
 			}
 			outPath[0] = new Vector2f(outPath[0].x,outPath[0].y);
 			//trace();
-			outPath = calculateBlock(outPath);
+			lineCrossBlock.crossBlockPolygonV = getCrossBlock();
 			
 			outPath = lineCrossBlock.processLine(outPath);
+			
+			outPath = calculateBlock(outPath);
 			
 			var string:String = "寻路时间："+(getTimer()-stime);
 			Console.getInstance().show(string);
@@ -126,16 +128,20 @@ package org.ijelly.findPath
 			
 			return outPath;
 		}
-		private function getCrossBlock():void{
+		private function getCrossBlock():Vector.<PolygonCircle>{
+			var calculateBlock:Object = new Object;
 			for(var i:int=0;i<cellPath.length;i++){
 				if(cellPath[i].crossBlockAry){
-					for(var j:int=0;j<cellPath[i].blockAry.length;j++){
-						calculateBlock[cellPath[i].blockAry[j]] = blockV[cellPath[i].blockAry[j]];
-						
-						//next = true;
+					for(var j:int=0;j<cellPath[i].crossBlockAry.length;j++){
+						calculateBlock[cellPath[i].crossBlockAry[j]] = crossBlockV[cellPath[i].crossBlockAry[j]];
 					}
 				}
 			}
+			var ary:Vector.<PolygonCircle> = new Vector.<PolygonCircle>;
+			for each(var obj:PolygonCircle in calculateBlock){
+				ary.push(obj);
+			}
+			return ary;
 		}
 		private function calculateBlock(lineAry:Array):Array{
 			var calculateBlock:Object = new Object;
