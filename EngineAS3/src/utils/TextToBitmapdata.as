@@ -10,12 +10,12 @@ package utils
 		{
 		}
 		private static var _txt:TextField = new TextField;
-		public static function getBitmapdata(str:String):BitmapData{
+		public static function getBitmapdata(str:String,color:String='#ffffff'):BitmapData{
 			_txt.multiline = true;
 			_txt.wordWrap = true;
 			_txt.filters = [new GlowFilter(0,1,2,2,3)];
 			_txt.width = 120;
-			_txt.htmlText = "<font color='#ffffff'>" + str + "</font>"
+			_txt.htmlText = "<font color='" + color + "'>" + str + "</font>"
 				
 			var bitmapdata:BitmapData = new BitmapData(60,17,true,0);
 			bitmapdata.draw(_txt);

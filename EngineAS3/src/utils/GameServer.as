@@ -6,6 +6,7 @@ package utils
 	import utils.event.LoadKeyEvent;
 	import utils.event.MapCenterEvent;
 	import utils.event.MapdataEvent;
+	import utils.event.PathEvent;
 	import utils.event.RefreshBitmapEvent;
 	import utils.event.ShowLoadingEvent;
 	import utils.map.GameContainer;
@@ -42,6 +43,7 @@ package utils
 			roleServer.roleContainer = gameContainer.RoleContainer;
 			
 			gameContainer.addEventListener(LoadKeyEvent.LOADKEYEVENT,mapServer.onLoadkey);
+			gameContainer.addEventListener(PathEvent.PATHEVENT,onFindPath);
 			mapServer.addEventListener(RefreshBitmapEvent.REFRESHBITMAPEVENT,gameContainer.refreshBitmap);
 			mapServer.addEventListener(ShowLoadingEvent.SHOWLOADINGEVENT,showLoading);
 			mapServer.addEventListener(MapdataEvent.MAPDATAEVENT,maploadComplete);
@@ -75,6 +77,10 @@ package utils
 		public function resize():void{
 			roleServer.setWH(stage.stageWidth,stage.stageHeight);
 		}
-		
+		public function onFindPath(event:PathEvent):void{
+			var path:Array = pathServer.findPath(event.beginP,event.endP);
+			gameContainer.drawPath(path);
+			roleServer.setPath(path);
+		}
 	}
 }
