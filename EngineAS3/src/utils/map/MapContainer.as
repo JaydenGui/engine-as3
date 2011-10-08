@@ -51,7 +51,7 @@ package utils.map
 			this.addChild(_RoleContainer);
 			
 			this.addEventListener(Event.ADDED_TO_STAGE,refreshStaticSpriteAry);
-			//this.addEventListener(MouseEvent.CLICK,onClick);
+			this.addEventListener(MouseEvent.CLICK,onClick);
 		}
 		private function refreshStaticSpriteAry(event:Event = null):void{
 			this._recW = stage.stageWidth;

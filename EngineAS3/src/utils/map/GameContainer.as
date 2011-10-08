@@ -17,6 +17,7 @@ package utils.map
 	import utils.element.StaticSprite;
 	import utils.event.LoadKeyEvent;
 	import utils.event.MapCenterEvent;
+	import utils.event.PathEvent;
 	import utils.event.RefreshBitmapEvent;
 	import utils.role.Hero;
 
@@ -25,6 +26,12 @@ package utils.map
 * */
 [Event(name="loadkeyevent", type="utils.event.LoadKeyEvent")]
 
+/**
+ * 派发寻路事件
+ * */
+[Event(name="pathevent", type="utils.event.PathEvent")]
+
+
 	
 	public class GameContainer extends Sprite implements IResizeDisplayObject
 	{
@@ -32,6 +39,8 @@ package utils.map
 		
 		private var _mapBitmap:Bitmap;
 		private var _mainBitmapdata:BitmapData;
+		
+		private var shape:Shape;
 		
 		private var _recW:int;
 		private var _recH:int;
@@ -42,6 +51,8 @@ package utils.map
 		
 		public var debug:Sprite;
 		
+		public var beginP:Point;
+		
 		public function GameContainer()
 		{
 			init();
@@ -50,7 +61,10 @@ package utils.map
 			_RoleContainer = new Sprite;
 			this.addChild(_RoleContainer);
 			
+			shape = new Shape;
+			this.addChild(shape);
 			//this.addEventListener(Event.ADDED_TO_STAGE,refreshStaticSpriteAry);
+			this.addEventListener(MouseEvent.CLICK,onClick);
 		}
 		private function refreshStaticSpriteAry(event:Event = null):void{
 			this._recW = stage.stageWidth;
@@ -60,6 +74,7 @@ package utils.map
 		}
 		
 		public function refrushMap(mapevent:MapCenterEvent):void{
+			beginP = mapevent.p;
 			var tempx:int =  this._recW/2 - mapevent.p.x;
 			var tempy:int =  this._recH/2 - mapevent.p.y;
 			if(tempx > 0){
@@ -74,8 +89,8 @@ package utils.map
 				tempy = this._recH - _mapH;
 			}
 			
-			this._mapBitmap.x = tempx;
-			this._mapBitmap.y = tempy;
+			this._mapBitmap.x = this.shape.x = tempx;
+			this._mapBitmap.y = this.shape.y = tempy;
 			
 			var event:LoadKeyEvent = new LoadKeyEvent(LoadKeyEvent.LOADKEYEVENT);
 			event.xpos = -tempx;
@@ -84,6 +99,35 @@ package utils.map
 			event.hNum = _hNum;
 			this.dispatchEvent(event);
 			//mapManager.onLoadkey(-tempx,-tempy,this._wNum,this._hNum);
+		}
+		
+		private function onClick(event:MouseEvent):void{
+			var endPoint:Point = new Point(event.localX - this._mapBitmap.x, event.localY - this._mapBitmap.y);
+			var events:PathEvent = new PathEvent(PathEvent.PATHEVENT)
+			events.beginP = beginP;
+			events.endP = endPoint;
+			this.dispatchEvent(events);
+			/*_beginPoint = new Point(hero.baseX,hero.baseY);
+			
+			var endPoint:Point = new Point(event.localX - this._mapBitmap.x, event.localY - this._mapBitmap.y);
+			
+			var outPath:Array =  mapManager.pathServer.findPath(_beginPoint, endPoint);
+			
+			debug.graphics.clear();
+			debug.graphics.lineStyle(1,0x00ff00);
+			for(var i:int;i<outPath.length;i++){
+				debug.graphics.drawCircle(outPath[i].x,outPath[i].y,3);
+			}
+			
+			hero.path = outPath;*/
+		}
+		
+		public function drawPath(outPath:Array):void{
+			shape.graphics.clear();
+			shape.graphics.lineStyle(1,0x00ff00);
+			for(var i:int;i<outPath.length;i++){
+				shape.graphics.drawCircle(outPath[i].x,outPath[i].y,3);
+			}
 		}
 		
 		public function resize():void
