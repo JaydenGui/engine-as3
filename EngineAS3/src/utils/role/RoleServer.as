@@ -7,6 +7,7 @@ package utils.role
 	import flash.geom.Point;
 	import flash.utils.Timer;
 	
+	import utils.debug.Console;
 	import utils.event.MapCenterEvent;
 	import utils.pool.ConstPool;
 
@@ -44,10 +45,18 @@ package utils.role
 		public function setWH(w:int,h:int):void{
 			this.baseW = w;
 			this.baseH = h;
+			if(hero){
+				hero.recW = w;
+				hero.recH = h;
+			}
 		}
 		public function setMapWH(w:int,h:int):void{
 			this.mapW = w;
 			this.mapH = h;
+			if(hero){
+				hero.mapW = w;
+				hero.mapH = h;
+			}
 		}
 		public function addHero():void{
 			
@@ -58,27 +67,35 @@ package utils.role
 			hero.dircet = 8*Math.random();
 			var obj:Object = new Object;
 			obj.title = "血池地狱";
+			obj.color = "#00ff00"; 
 			obj.image = ConstPool.roleAry[int(16*Math.random())];
 			hero.info = obj;
 			
-			hero.baseX = 439;
-			hero.baseY = 440;
+			hero.baseX = 400;
+			hero.baseY = 400;
+			
+			hero.recW = baseW;
+			hero.recH = baseH;
+			hero.mapW = mapW;
+			hero.mapH = mapH;
 			
 			hero.addTostage(roleContainer);
 			hero.server = this;
 			this.dispatchCenter(new Point(hero.baseX,hero.baseY));
 			allRoleList.push(hero);
 			addRoles();
+			roleContainer.addEventListener(Event.ENTER_FRAME,render);
 		}
 		private function addRoles():void{
 			
 			var l:int = 3;
 			var angle:Number = 2 * Math.PI
 			for(var j:int=0;j<1500;j++){
-				var role:Role = new Role;
-				role.x = baseW*2*Math.random();
-				role.y = baseH*2*Math.random();
-				var s:Number = angle*Math.random();
+				var role:OtherRole = new OtherRole;
+				role.hero = hero;
+				role.baseX = mapW*Math.random();
+				role.baseY = mapH*Math.random();
+				var s:Number = angle*Math.random(); 
 				if(j%2){
 					role.vx = l * Math.sin(s);
 					role.vy = l * Math.cos(s);
@@ -96,11 +113,9 @@ package utils.role
 				
 			}
 			
-			var timer:Timer = new Timer(500);
+			var timer:Timer = new Timer(1000);
 			timer.addEventListener(TimerEvent.TIMER,onTimerLogic);
 			timer.start();
-			
-			roleContainer.addEventListener(Event.ENTER_FRAME,render);
 		}
 		public function addRole(role:Role):void{
 			
@@ -113,7 +128,7 @@ package utils.role
 			var role:Role;
 			for(var i:int=0;i<allRoleList.length;i++){
 				role = allRoleList[i];
-				if(role.x < baseW && role.y <baseH){
+				if(role.x > 0 && role.x < baseW && role.y > 0 && role.y < baseH){
 					tempV.push(role);
 				}
 				
@@ -129,7 +144,8 @@ package utils.role
 				role.addTostage(roleContainer);
 			}	
 			displayList = tempV;
-			trace(roleContainer.numChildren);
+			//trace(roleContainer.numChildren);
+			Console.getInstance().show(String(roleContainer.numChildren));
 		}
 		private function onTimerLogic(event:TimerEvent):void{
 			if(flag){
@@ -164,23 +180,18 @@ package utils.role
 			return two.y - one.y;
 		}
 		private function render(event:Event):void{
-			for each(var role:Role in displayList){
+			var role:Role;
+			for each(role in displayList){ 
 				role.render();
 			}
 			for each(role in allRoleList){
-				role.x += role.vx;
-				role.y += role.vy;
-				if(role.x > baseW*2 || role.x < 0 || role.y > baseH*2 || role.y < 0){
-					role.x = baseW*2*Math.random();
-					role.y = baseH*2*Math.random();
+				role.go();
+				if(role.baseX > mapW || role.baseX < 0 || role.baseY > mapH|| role.baseY < 0){
+					role.baseX = mapW*Math.random();
+					role.baseY = mapH*Math.random();
 				}
 			}
 		}
-		
-		/*private function render(event:Event):void{
-			hero.render();
-			hero.go();
-		}*/
 		
 		public function dispatchCenter(p:Point):void{
 			var event:MapCenterEvent = new MapCenterEvent(MapCenterEvent.MAPCENTEREVENT);
@@ -188,6 +199,8 @@ package utils.role
 			this.dispatchEvent(event);
 		}
 		
-		
+		public function setPath(path:Array):void{
+			hero.path = path;
+		}
 	}
 }

@@ -5,6 +5,9 @@ package utils.role
 	
 	import org.ijelly.geom.Vector2f;
 	
+	import utils.map.MapContainer;
+	import utils.map.MapManager;
+	
 	public class Hero extends Role
 	{
 		private var _path:Array;
@@ -22,6 +25,8 @@ package utils.role
 		private var _recH:int;
 		
 		public var server:RoleServer;
+		
+		public var _map:MapContainer;
 		
 		public function Hero()
 		{
@@ -57,7 +62,7 @@ package utils.role
 			/**add*/
 			//_map.refrushMap(this.baseX,this.baseY);
 			server.dispatchCenter(new Point(this.baseX,this.baseY));
-			if(Math.abs(this.baseX-this._targetPoint.x) < 10 && Math.abs(this.baseY-this._targetPoint.y) < 10){
+			if(Math.abs(this.baseX-this._targetPoint.x) < 20 && Math.abs(this.baseY-this._targetPoint.y) < 20){
 				if(this._flag == _path.length-1){
 					stopMove();
 					walk = false;
@@ -69,10 +74,11 @@ package utils.role
 				}
 			}
 		}
+		
 
 		public function set path(value:Array):void
 		{
-			if(value == null || value.length == 0){
+			if(value == null || value.length <= 1 ){
 				return;
 			}
 			_path = value;
@@ -126,6 +132,26 @@ package utils.role
 				startMove(9);
 			else              //右下
 				startMove(7);
+		}
+
+		public function set mapW(value:int):void
+		{
+			_mapW = value;
+		}
+
+		public function set mapH(value:int):void
+		{
+			_mapH = value;
+		}
+
+		public function set recW(value:int):void
+		{
+			_recW = value;
+		}
+
+		public function set recH(value:int):void
+		{
+			_recH = value;
 		}
 		
 

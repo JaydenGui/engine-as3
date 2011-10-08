@@ -118,9 +118,10 @@ package utils.role
 		public function set info(value:Object):void
 		{
 			_info = value;
-			//_txt.htmlText = "<font color='#ffffff'>" + value.title + "</font>"
-			//_txt.cacheAsBitmap = true;
-			_txtbitmap.bitmapData = TextToBitmapdata.getBitmapdata(value.title);
+			if(_info.hasOwnProperty("color"))
+				_txtbitmap.bitmapData = TextToBitmapdata.getBitmapdata(value.title,_info.color);
+			else
+				_txtbitmap.bitmapData = TextToBitmapdata.getBitmapdata(value.title);
 			_rolebitmap.source = value.image;
 			
 		}
@@ -139,7 +140,7 @@ package utils.role
 		}
 		public function go():void{
 			this.baseX += vx;
-			this.baseX += vy;
+			this.baseY += vy;
 		}
 
 		public function get baseX():Number
