@@ -36,7 +36,7 @@ package
 			stage.addEventListener(Event.RESIZE,onStageResize);
 			gameServer = new GameServer(stage);
 			gameServer.start();
-			gameServer.gotoScence("CJ201");
+			gameServer.gotoScence("CJ301");
 			
 			stage.addChild(Console.getInstance());
 			//initMap();
@@ -51,7 +51,7 @@ package
 			mapContainer.debug = debugContainer;
 			
 			mapServer = new MapManager(stage,mapContainer);
-			mapServer.initMap("CJ301");
+			mapServer.initMap("CJ201");
 			this.addChild(Console.getInstance());
 			mapServer.addEventListener(Event.INIT,onMapInit);
 			
@@ -70,6 +70,7 @@ package
 			
 			hero.baseX = 439;
 			hero.baseY = 440;
+			hero._map = mapContainer;
 			mapContainer.hero = hero;
 			mapContainer.refrushMap(hero.baseX,hero.baseY);
 			
